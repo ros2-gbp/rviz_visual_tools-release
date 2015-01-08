@@ -1,0 +1,12 @@
+Source: ros-indigo-rviz-visual-tools
+Section: misc
+Priority: extra
+Maintainer: Dave Coleman <davetcoleman@gmail.com>
+Build-Depends: debhelper (>= 9.0.0), ros-indigo-catkin, ros-indigo-cmake-modules, ros-indigo-eigen-conversions, ros-indigo-geometry-msgs, ros-indigo-graph-msgs, ros-indigo-roscpp, ros-indigo-std-msgs, ros-indigo-tf-conversions, ros-indigo-trajectory-msgs, ros-indigo-visualization-msgs
+Homepage: https://github.com/davetcoleman/rviz_visual_tools
+Standards-Version: 3.9.2
+
+Package: ros-indigo-rviz-visual-tools
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}, ros-indigo-geometry-msgs, ros-indigo-graph-msgs, ros-indigo-std-msgs, ros-indigo-trajectory-msgs, ros-indigo-visualization-msgs
+Description: Helper functions for displaying and debugging data in Rviz via published markers
