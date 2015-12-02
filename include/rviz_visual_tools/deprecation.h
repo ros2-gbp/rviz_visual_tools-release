@@ -1,7 +1,7 @@
 /*********************************************************************
  * Software License Agreement (BSD License)
  *
- *  Copyright (c) 2015, University of Colorado, Boulder
+ *  Copyright (c) 2012, Willow Garage, Inc.
  *  All rights reserved.
  *
  *  Redistribution and use in source and binary forms, with or without
@@ -14,7 +14,7 @@
  *     copyright notice, this list of conditions and the following
  *     disclaimer in the documentation and/or other materials provided
  *     with the distribution.
- *   * Neither the name of the Univ of CO, Boulder nor the names of its
+ *   * Neither the name of Willow Garage nor the names of its
  *     contributors may be used to endorse or promote products derived
  *     from this software without specific prior written permission.
  *
@@ -32,66 +32,20 @@
  *  POSSIBILITY OF SUCH DAMAGE.
  *********************************************************************/
 
-/* Author: Dave Coleman
-   Desc:   Demo implementation of rviz_visual_tools
-           To use, add a Rviz Marker Display subscribed to topic /rviz_visual_tools
-*/
+#ifndef RVIZ_VISUAL_TOOLS__DEPRECATION_
+#define RVIZ_VISUAL_TOOLS__DEPRECATION_
 
-// ROS
-#include <ros/ros.h>
+/** \def RVIZ_VISUAL_TOOLS_DEPRECATED
+    Macro that marks functions as deprecated */
 
-// For visualizing things in rviz
-#include <rviz_visual_tools/rviz_visual_tools.h>
+#ifdef __GNUC__
+#define RVIZ_VISUAL_TOOLS_DEPRECATED __attribute__((deprecated))
+#elif defined(_MSC_VER)
+#define RVIZ_VISUAL_TOOLS_DEPRECATED __declspec(deprecated)
+#elif defined(__clang__)
+#define RVIZ_VISUAL_TOOLS_DEPRECATED __attribute__((deprecated("Use of this method is deprecated")))
+#else
+#define RVIZ_VISUAL_TOOLS_DEPRECATED /* Nothing */
+#endif
 
-namespace rviz_visual_tools
-{
-class RvizVisualToolsTest
-{
-private:
-  // A shared node handle
-  ros::NodeHandle nh_;
-
-  // For visualizing things in rviz
-  rviz_visual_tools::RvizVisualToolsPtr visual_tools_;
-
-public:
-  /**
-   * \brief Constructor
-   */
-  RvizVisualToolsTest()
-  {
-    visual_tools_.reset(new rviz_visual_tools::RvizVisualTools("base", "/rviz_visual_tools"));
-
-    // Allow time to publish messages
-    ROS_INFO_STREAM_NAMED("test", "Waiting 4 seconds to start test...");
-    ros::Duration(4.0).sleep();
-
-    while (ros::ok())
-    {
-      visual_tools_->publishTests();
-    }
-  }
-
-  /**
-   * \brief Destructor
-   */
-  ~RvizVisualToolsTest() {}
-};  // end class
-
-}  // end namespace
-
-int main(int argc, char** argv)
-{
-  ros::init(argc, argv, "visual_tools_test");
-  ROS_INFO_STREAM("Visual Tools Test");
-
-  // Allow the action server to recieve and send ros messages
-  ros::AsyncSpinner spinner(1);
-  spinner.start();
-
-  rviz_visual_tools::RvizVisualToolsTest tester;
-
-  ROS_INFO_STREAM("Shutting down.");
-
-  return 0;
-}
+#endif

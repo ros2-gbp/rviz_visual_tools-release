@@ -32,66 +32,70 @@
  *  POSSIBILITY OF SUCH DAMAGE.
  *********************************************************************/
 
-/* Author: Dave Coleman
-   Desc:   Demo implementation of rviz_visual_tools
-           To use, add a Rviz Marker Display subscribed to topic /rviz_visual_tools
+/* Author: Dave Coleman <dave@dav.ee>
+   Desc:   Helps debug and visualize transforms via the TF infrastructure
+   Note:   We shouldn't have to publish the transforms at interval since they are static, but we do
+   because of https://github.com/ros/geometry_experimental/issues/108
 */
+
+#ifndef RVIZ_VISUAL_TOOLS__TF_VISUAL_TOOLS
+#define RVIZ_VISUAL_TOOLS__TF_VISUAL_TOOLS
 
 // ROS
 #include <ros/ros.h>
+#include <geometry_msgs/TransformStamped.h>
 
-// For visualizing things in rviz
-#include <rviz_visual_tools/rviz_visual_tools.h>
+// Eigen
+#include <Eigen/Geometry>
+
+#include <tf2_ros/transform_broadcaster.h>
+
+// namespace tf2_ros
+// {
+// class StaticTransformBroadcaster;
+// };
 
 namespace rviz_visual_tools
 {
-class RvizVisualToolsTest
+class TFVisualTools
 {
-private:
-  // A shared node handle
-  ros::NodeHandle nh_;
-
-  // For visualizing things in rviz
-  rviz_visual_tools::RvizVisualToolsPtr visual_tools_;
-
 public:
   /**
    * \brief Constructor
    */
-  RvizVisualToolsTest()
-  {
-    visual_tools_.reset(new rviz_visual_tools::RvizVisualTools("base", "/rviz_visual_tools"));
-
-    // Allow time to publish messages
-    ROS_INFO_STREAM_NAMED("test", "Waiting 4 seconds to start test...");
-    ros::Duration(4.0).sleep();
-
-    while (ros::ok())
-    {
-      visual_tools_->publishTests();
-    }
-  }
+  TFVisualTools();
 
   /**
-   * \brief Destructor
+   * \brief Visualize transforms in Rviz, etc
+   * \return true on success
    */
-  ~RvizVisualToolsTest() {}
+  bool publishTransform(const Eigen::Affine3d& transform, const std::string& from_frame,
+                        const std::string& to_frame);
+
+  /**
+   * \brief At a certain frequency update the tf transforms that we are tracking
+   */
+  void publishAllTransforms(const ros::TimerEvent& e);
+
+private:
+  // A shared node handle
+  ros::NodeHandle nh_;
+
+  // Send tf messages
+  tf2_ros::TransformBroadcaster tf_pub_;
+
+  // Separate thread to publish transforms
+  ros::Timer non_realtime_loop_;
+
+  // Collect the transfroms
+  std::vector<geometry_msgs::TransformStamped> transforms_;
+
 };  // end class
+
+// Create boost pointers for this class
+typedef boost::shared_ptr<TFVisualTools> TFVisualToolsPtr;
+typedef boost::shared_ptr<const TFVisualTools> TFVisualToolsConstPtr;
 
 }  // end namespace
 
-int main(int argc, char** argv)
-{
-  ros::init(argc, argv, "visual_tools_test");
-  ROS_INFO_STREAM("Visual Tools Test");
-
-  // Allow the action server to recieve and send ros messages
-  ros::AsyncSpinner spinner(1);
-  spinner.start();
-
-  rviz_visual_tools::RvizVisualToolsTest tester;
-
-  ROS_INFO_STREAM("Shutting down.");
-
-  return 0;
-}
+#endif
