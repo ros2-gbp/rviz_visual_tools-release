@@ -12,6 +12,7 @@ find_package(catkin REQUIRED COMPONENTS
   std_msgs
   trajectory_msgs
   cmake_modules
+  rostest
 )
 
 find_package(Eigen REQUIRED)
@@ -44,6 +45,7 @@ include_directories(
 # Visualization Tools Library
 add_library(${PROJECT_NAME}
   src/rviz_visual_tools.cpp
+  src/tf_visual_tools.cpp
 )
 
 add_dependencies(${PROJECT_NAME} graph_msgs_generate_messages_cpp)
@@ -58,7 +60,20 @@ target_link_libraries(rviz_visual_tools_test
   ${catkin_LIBRARIES} ${PROJECT_NAME}
 )
 
-## Install
+
+# TESTS -----------------------------------------------------------------
+if(CATKIN_ENABLE_TESTING)
+
+  add_rostest_gtest(rvt_test launch/rvt_test.launch tests/rvt_test.cpp)
+  target_link_libraries(rvt_test
+    ${PROJECT_NAME}
+    ${catkin_LIBRARIES} 
+    ${Boost_LIBRARIES} 
+  )
+
+endif()
+
+## Install ------------------------------------------------------------
 
 # Install libraries
 install(TARGETS ${PROJECT_NAME} 
@@ -70,5 +85,4 @@ install(DIRECTORY include/${PROJECT_NAME}/   DESTINATION ${CATKIN_PACKAGE_INCLUD
 # Install shared resources
 install(DIRECTORY launch    DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION})
 install(DIRECTORY resources DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION})
-
 
