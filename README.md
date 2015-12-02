@@ -1,3 +1,24 @@
+## rviz_visual_tools (indigo) - 2.0.0-0
+
+The packages in the `rviz_visual_tools` repository were released into the `indigo` distro by running `/usr/bin/bloom-release rviz_visual_tools -t indigo -r indigo` on `Wed, 02 Dec 2015 22:09:38 -0000`
+
+The `rviz_visual_tools` package was released.
+
+Version of package(s) in repository `rviz_visual_tools`:
+- upstream repository: https://github.com/davetcoleman/rviz_visual_tools.git
+- release repository: https://github.com/davetcoleman/rviz_visual_tools-release.git
+- rosdistro version: `1.5.0-0`
+- old version: `1.5.0-0`
+- new version: `2.0.0-0`
+
+Versions of tools used:
+- bloom version: `0.5.20`
+- catkin_pkg version: `0.2.10`
+- rosdep version: `0.11.4`
+- rosdistro version: `0.4.2`
+- vcstools version: `0.1.38`
+
+
 ## rviz_visual_tools (indigo) - 1.5.0-0
 
 The packages in the `rviz_visual_tools` repository were released into the `indigo` distro by running `/usr/bin/bloom-release rviz_visual_tools -t indigo -r indigo` on `Thu, 08 Jan 2015 04:31:42 -0000`
