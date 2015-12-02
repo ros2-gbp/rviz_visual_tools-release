@@ -33,65 +33,73 @@
  *********************************************************************/
 
 /* Author: Dave Coleman
-   Desc:   Demo implementation of rviz_visual_tools
-           To use, add a Rviz Marker Display subscribed to topic /rviz_visual_tools
+   Desc:   Helper class for publishing arrow markers
 */
 
-// ROS
-#include <ros/ros.h>
+#ifndef RVIZ_VISUAL_TOOLS__ARROW_MARKER_H_
+#define RVIZ_VISUAL_TOOLS__ARROW_MARKER_H_
 
-// For visualizing things in rviz
 #include <rviz_visual_tools/rviz_visual_tools.h>
 
 namespace rviz_visual_tools
 {
-class RvizVisualToolsTest
+
+class RvizVisualTools;
+
+class HelperMarker
 {
-private:
-  // A shared node handle
-  ros::NodeHandle nh_;
-
-  // For visualizing things in rviz
-  rviz_visual_tools::RvizVisualToolsPtr visual_tools_;
-
 public:
-  /**
-   * \brief Constructor
-   */
-  RvizVisualToolsTest()
+  visualization_msgs::Marker marker_;
+  RvizVisualTools* rvt_;
+  
+}; // end class
+
+class ArrowMarker : HelperMarker
+{
+public:
+
+  ArrowMarker(const Eigen::Affine3d &pose, const RvizVisualTools* rvt)
   {
-    visual_tools_.reset(new rviz_visual_tools::RvizVisualTools("base", "/rviz_visual_tools"));
-
-    // Allow time to publish messages
-    ROS_INFO_STREAM_NAMED("test", "Waiting 4 seconds to start test...");
-    ros::Duration(4.0).sleep();
-
-    while (ros::ok())
-    {
-      visual_tools_->publishTests();
-    }
+    rvt->convertPoseSafe(pose, marker_.pose);
+    ArrowMarker(frame_id, id);
   }
 
-  /**
-   * \brief Destructor
-   */
-  ~RvizVisualToolsTest() {}
-};  // end class
+  ArrowMarker(const geometry_msgs::Pose &pose, const RvizVisualTools* rvt)
+  {
+    marker_.pose = pose;
+    ArrowMarker(frame_id, id);
+  }
 
-}  // end namespace
+  ArrowMarker(const RvizVisualTools* rvt)
+  {
+    // Set the frame ID and timestamp.
+    marker_.header.stamp = ros::Time::now();
+    marker_.header.frame_id = frame_id;
 
-int main(int argc, char** argv)
-{
-  ros::init(argc, argv, "visual_tools_test");
-  ROS_INFO_STREAM("Visual Tools Test");
+    // Set the namespace and id for this marker.  This serves to create a unique ID
+    marker_.ns = "Arrow";
+    marker_.id = id;
 
-  // Allow the action server to recieve and send ros messages
-  ros::AsyncSpinner spinner(1);
-  spinner.start();
+    // Other properites
+    marker_.type = visualization_msgs::Marker::ARROW;
+    marker_.action = visualization_msgs::Marker::ADD;
+    marker_.lifetime = ros::Duration(0.0);
+    marker_.color = getColor(rvt::BLUE);
+    marker_.scale = getScale(rvt::REGULAR, true);
+    marker_.scale.x = 0.1;  // overrides previous x scale specified
+  }
 
-  rviz_visual_tools::RvizVisualToolsTest tester;
+  void setPose(const Eigen::Affine3d &pose) { marker_.pose = convertPose(pose); };
+  //  void setColor(const rviz_visual_tools::colors &color) { marker_.color = getColor(color); };
+  //  void setScale(const rviz_visual_tools::scales &scale) { marker_.scale = getScale(scale, true); }
+  void setLength(double length) { marker_.scale.x = length; }
+  void setID(int id) { marker_.id = id; }
+  void setLifetime(double lifetime) {marker_.lifetime = lifetime; }
+  void setAction(int action) {marker_.action = action; }
+  void setNamespace(const std::string& ns) {marker_.ns = ns; }
+  void setFrameID(const std::string& frame_id) {marker_.frame_id = frame_id; }
+}; // end class
 
-  ROS_INFO_STREAM("Shutting down.");
+} // end namespace
 
-  return 0;
-}
+#endif
