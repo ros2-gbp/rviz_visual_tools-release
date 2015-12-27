@@ -1,7 +1,6 @@
 cmake_minimum_required(VERSION 2.8.3)
 project(rviz_visual_tools)
 
-# Load catkin and all dependencies required for this package
 find_package(catkin REQUIRED COMPONENTS
   cmake_modules
   eigen_conversions
@@ -13,12 +12,12 @@ find_package(catkin REQUIRED COMPONENTS
   tf_conversions
   trajectory_msgs
   visualization_msgs
+  roslint
 )
 
 find_package(Eigen REQUIRED)
 find_package(Boost REQUIRED thread system)
 
-# Catkin
 catkin_package(
   LIBRARIES
     ${PROJECT_NAME}
@@ -31,16 +30,14 @@ catkin_package(
   INCLUDE_DIRS include
 )
 
-# Enable gdb to show line numbers
-#set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -g -W -Wall -Wno-unused-parameter -fno-strict-aliasing")
-#set(CMAKE_BUILD_TYPE Debug)
-
-## Build
-
 include_directories(
   include
   ${catkin_INCLUDE_DIRS}
 )
+
+###########
+## Build ##
+###########
 
 # Visualization Tools Library
 add_library(${PROJECT_NAME}
@@ -60,8 +57,10 @@ target_link_libraries(rviz_visual_tools_test
   ${catkin_LIBRARIES} ${PROJECT_NAME}
 )
 
+##########
+## TEST ##
+##########
 
-# TESTS -----------------------------------------------------------------
 if(CATKIN_ENABLE_TESTING)
 
   add_rostest_gtest(rvt_test launch/rvt_test.launch tests/rvt_test.cpp)
@@ -73,7 +72,12 @@ if(CATKIN_ENABLE_TESTING)
 
 endif()
 
-## Install ------------------------------------------------------------
+## Test for correct C++ source code
+roslint_cpp()
+
+#############
+## Install ##
+#############
 
 # Install libraries
 install(TARGETS ${PROJECT_NAME}
