@@ -1,0 +1,12 @@
+Source: ros-jade-rviz-visual-tools
+Section: misc
+Priority: extra
+Maintainer: Dave Coleman <davetcoleman@gmail.com>
+Build-Depends: debhelper (>= 9.0.0), ros-jade-catkin, ros-jade-cmake-modules, ros-jade-eigen-conversions, ros-jade-geometry-msgs, ros-jade-graph-msgs, ros-jade-roscpp, ros-jade-roslint, ros-jade-rostest, ros-jade-rosunit, ros-jade-std-msgs, ros-jade-tf-conversions, ros-jade-trajectory-msgs, ros-jade-visualization-msgs
+Homepage: https://github.com/davetcoleman/rviz_visual_tools
+Standards-Version: 3.9.2
+
+Package: ros-jade-rviz-visual-tools
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}, ros-jade-geometry-msgs, ros-jade-graph-msgs, ros-jade-std-msgs, ros-jade-trajectory-msgs, ros-jade-visualization-msgs
+Description: Helper functions for displaying and debugging data in Rviz via published markers
