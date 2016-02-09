@@ -2,6 +2,19 @@
 Changelog for package rviz_visual_tools
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+2.1.0 (2016-02-09)
+------------------
+* Allow publishArrow functions to specify ID
+* Contributors: Dave Coleman
+
+2.0.3 (2016-01-10)
+------------------
+* Renamed test to demo
+* Fix bug in random number generator
+* Noted a TODO
+* Documentation
+* Contributors: Dave Coleman
+
 2.0.2 (2015-12-27)
 ------------------
 * Formatting
