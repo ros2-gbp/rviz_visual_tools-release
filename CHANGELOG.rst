@@ -2,6 +2,11 @@
 Changelog for package rviz_visual_tools
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+2.1.0 (2016-02-09)
+------------------
+* Allow publishArrow functions to specify ID
+* Contributors: Dave Coleman
+
 2.0.3 (2016-01-10)
 ------------------
 * Renamed test to demo
