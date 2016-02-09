@@ -241,6 +241,12 @@ public:
   std_msgs::ColorRGBA getColor(const colors &color);
 
   /**
+   * \brief Create a random color that is not too light
+   * \return the RGB message of a random color
+   */
+  std_msgs::ColorRGBA createRandColor();
+
+  /**
    * \brief Get the rviz marker scale of standard sizes
    * \param scale - an enum pre-defined name of a size
    * \param arrow_scale - they do not have an even scaling, compensate
@@ -456,7 +462,7 @@ public:
    * \return true on success
    */
   bool publishZArrow(const Eigen::Affine3d &pose, const colors &color = BLUE, const scales &scale = REGULAR,
-                     double length = 0.1);
+                     double length = 0.1, const std::size_t &id = 0);
   bool publishZArrow(const geometry_msgs::Pose &pose, const colors &color = BLUE, const scales &scale = REGULAR,
                      double length = 0.1);
   bool publishZArrow(const geometry_msgs::PoseStamped &pose, const colors &color = BLUE, const scales &scale = REGULAR,
@@ -475,7 +481,7 @@ public:
   bool publishArrow(const Eigen::Affine3d &pose, const colors &color = BLUE, const scales &scale = REGULAR,
                     double length = 0.1);
   bool publishArrow(const geometry_msgs::Pose &pose, const colors &color = BLUE, const scales &scale = REGULAR,
-                    double length = 0.1);
+                    double length = 0.1, const std::size_t &id = 0);
   bool publishArrow(const geometry_msgs::PoseStamped &pose, const colors &color = BLUE, const scales &scale = REGULAR,
                     double length = 0.1, const std::size_t &id = 0);
 
@@ -632,7 +638,7 @@ public:
   /**
    * \brief Display a mesh from file
    * \param pose - the location to publish the marker with respect to the base frame
-   * \param file name of mesh, starting with "file://"
+   * \param file name of mesh, starting with "file://" e.g. "file:///home/user/mesh.stl"
    * \param color - an enum pre-defined name of a color
    * \param scale - an enum pre-defined name of a size
    * \param ns - namespace of marker
@@ -837,6 +843,9 @@ protected:
 
   // A shared node handle
   ros::NodeHandle nh_;
+
+  // Short name for this class
+  std::string name_;
 
   // ROS publishers
   ros::Publisher pub_rviz_markers_;  // for rviz visualization markers

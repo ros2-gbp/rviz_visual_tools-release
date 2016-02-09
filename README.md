@@ -11,8 +11,8 @@ This package includes:
 Developed by [Dave Coleman](http://dav.ee) at the Correll Robotics Lab, University of Colorado Boulder with help from Andy McEvoy and others.
 
  * [![Build Status](https://travis-ci.org/davetcoleman/rviz_visual_tools.svg)](https://travis-ci.org/davetcoleman/rviz_visual_tools) Travis CI
- * [![Devel Job Status](http://jenkins.ros.org/buildStatus/icon?job=devel-indigo-rviz_visual_tools)](http://jenkins.ros.org/job/devel-indigo-rviz_visual_tools) Devel Job Status
- * [![Build Status](http://jenkins.ros.org/buildStatus/icon?job=ros-indigo-rviz-visual-tools_binarydeb_trusty_amd64)](http://jenkins.ros.org/job/ros-indigo-rviz-visual-tools_binarydeb_trusty_amd64/) AMD64 Debian Job Status
+ * [![Build Status](http://build.ros.org/buildStatus/icon?job=Jsrc_uT__rviz_visual_tools__ubuntu_trusty__source)](http://build.ros.org/view/Jsrc_uT/job/Jsrc_uT__rviz_visual_tools__ubuntu_trusty__source/) ROS Buildfarm - Trusty Devel Source Build
+ * [![Build Status](http://build.ros.org/buildStatus/icon?job=Jbin_uT64__rviz_visual_tools__ubuntu_trusty_amd64__binary)](http://build.ros.org/view/Jbin_uT64/job/Jbin_uT64__rviz_visual_tools__ubuntu_trusty_amd64__binary/) ROS Buildfarm - AMD64 Trusty Debian Build
 
 <img align="right" src="https://raw.github.com/davetcoleman/rviz_visual_tools/indigo-devel/resources/screenshot.png" />
 
@@ -31,11 +31,11 @@ Clone this repository into a catkin workspace, then use the rosdep install tool 
 rosdep install --from-paths src --ignore-src --rosdistro indigo
 ```
 
-## Quick Start
+## Quick Start Demo
 
 To see random shapes generated in Rviz:
 
-    roslaunch rviz_visual_tools visual_tools_test.launch
+    roslaunch rviz_visual_tools visual_tools_demo.launch
 
 ## Code API
 
@@ -189,9 +189,17 @@ This tool lets you easily debug Eigen transforms in Rviz. Demo use:
     Eigen::Affine3d world_to_shelf_transform = Eigen::Affine3d::Identity(); // or whatever value
     tf_visualizer.publishTransform(world_to_shelf_transform, "world", "shelf");
 
-## Running Tests
+## Testing and Linting
 
-There is a small number of tests available. With catkin-tools installed, run:
+To run [roslint](http://wiki.ros.org/roslint), use the following command with [catkin-tools](https://catkin-tools.readthedocs.org/):
+
+    catkin build --no-status --no-deps --this --make-args roslint
+
+To run [catkin lint](https://pypi.python.org/pypi/catkin_lint), use the following command with [catkin-tools](https://catkin-tools.readthedocs.org/):
+
+    catkin lint -W2
+
+Use the following command with [catkin-tools](https://catkin-tools.readthedocs.org/) to run the small amount of available tests:
 
     catkin run_tests --no-deps --this -i
 
