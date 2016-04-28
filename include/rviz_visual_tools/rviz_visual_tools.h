@@ -64,7 +64,7 @@
 #include <trajectory_msgs/JointTrajectory.h>
 
 // rviz_visual_tools
-// #include <rviz_visual_tools/deprecation.h>
+#include <rviz_visual_tools/deprecation.h>
 
 namespace rviz_visual_tools
 {
@@ -76,27 +76,27 @@ static const double LARGE_SCALE = 100;
 // Note: when adding new colors to colors, also add them to getRandColor() function
 enum colors
 {
-  BLACK,
-  BLUE,
-  BROWN,
-  CYAN,
-  DARK_GREY,
-  GREEN,
-  GREY,
-  LIME_GREEN,
-  MAGENTA,
-  ORANGE,
-  PINK,
-  PURPLE,
-  RED,
-  WHITE,
-  YELLOW,
-  TRANSLUCENT_LIGHT,
-  TRANSLUCENT,
-  TRANSLUCENT_DARK,
-  RAND,
-  CLEAR,
-  DEFAULT  // i.e. 'do not change default color'
+  BLACK = 0,
+  BROWN = 1,
+  BLUE = 2,
+  CYAN = 3,
+  GREY = 4,
+  DARK_GREY = 5,
+  GREEN = 6,
+  LIME_GREEN = 7,
+  MAGENTA = 8,
+  ORANGE = 9,
+  PURPLE = 10,
+  RED = 11,
+  PINK = 12,
+  WHITE = 13,
+  YELLOW = 14,
+  TRANSLUCENT = 15,
+  TRANSLUCENT_LIGHT = 16,
+  TRANSLUCENT_DARK = 17,
+  RAND = 18,
+  CLEAR = 19,
+  DEFAULT = 20  // i.e. 'do not change default color'
 };
 
 enum scales
@@ -177,7 +177,9 @@ public:
   /**
    * \brief Deconstructor
    */
-  ~RvizVisualTools() {}
+  ~RvizVisualTools()
+  {
+  }
 
   /**
    * \brief Tell Rviz to clear all markers on a particular display. Note: only works on ROS Indigo
@@ -197,10 +199,18 @@ public:
    */
   bool loadRvizMarkers();
 
+  /** \brief Set marker array topic */
+  void setMarkerTopic(const std::string &topic)
+  {
+    marker_topic_ = topic;
+  }
+
   /**
    * \brief Load publishers as needed
+   * \param wait_for_subscriber - whether a sleep for loop should be used to check for connectivity to an external node
+   *                              before proceeding
    */
-  void loadMarkerPub();
+  void loadMarkerPub(bool wait_for_subscriber = false);
 
   /**
    * \brief Wait until at least one subscriber connects to a publisher
@@ -220,7 +230,10 @@ public:
    * \brief Change the transparency of all markers published
    * \param alpha - value 0 - 1 where 0 is invisible
    */
-  void setAlpha(double alpha) { alpha_ = alpha; }
+  void setAlpha(double alpha)
+  {
+    alpha_ = alpha;
+  }
   /**
    * \brief Set the lifetime of markers published to rviz
    * \param lifetime seconds of how long to show markers. 0 for inifinity
@@ -245,6 +258,18 @@ public:
    * \return the RGB message of a random color
    */
   std_msgs::ColorRGBA createRandColor();
+
+  /**
+   * \brief Interpolate from [start, end] with value of size steps with current value count
+   * \return interpolated value
+   */
+  double slerp(double start, double end, double range, double value);
+
+  /**
+   * \brief Convert a value from [0,1] to a color Green->Red
+   * \return interpolated color
+   */
+  std_msgs::ColorRGBA getColorScale(double value);
 
   /**
    * \brief Get the rviz marker scale of standard sizes
@@ -275,7 +300,10 @@ public:
    * \brief Get the base frame
    * \return name of base frame
    */
-  const std::string getBaseFrame() { return base_frame_; }
+  const std::string getBaseFrame()
+  {
+    return base_frame_;
+  }
   /**
    * \brief Change the global base frame
    *        Note: this might reset all your current markers
@@ -290,23 +318,28 @@ public:
   /**
    * \brief Getter for the global scale used for changing size of all markers
    */
-  double getGlobalScale() { return global_scale_; }
+  double getGlobalScale()
+  {
+    return global_scale_;
+  }
   /**
    * \brief Setter for the global scale used for changing size of all markers
    */
-  void setGlobalScale(double global_scale) { global_scale_ = global_scale; }
+  void setGlobalScale(double global_scale)
+  {
+    global_scale_ = global_scale;
+  }
   /**
    * \brief Display a visualization_msgs Marker of a custom type. Allows reuse of the ros publisher
    * \param marker - a pre-made marker ready to be published
    * \return true on success
    */
-  bool publishMarker(const visualization_msgs::Marker &marker);
+  bool publishMarker(visualization_msgs::Marker &marker);
 
   /**
    * \brief Enable batch publishing - useful for when many markers need to be published at once and
-   * the ROS topic can get
-   *        overloaded. This collects all published markers into array and only publishes them with
-   * triggerBatchPublish() is called
+   * the ROS topic can get overloaded. This collects all published markers into array and only publishes
+   * them with triggerBatchPublish() is called
    */
   void enableBatchPublishing(bool enable = true);
 
@@ -329,7 +362,7 @@ public:
    * \param markers
    * \return true on success
    */
-  bool publishMarkers(const visualization_msgs::MarkerArray &markers);
+  bool publishMarkers(visualization_msgs::MarkerArray &markers);
 
   /**
    * \brief Display a cone of a given angle along the x-axis
@@ -402,6 +435,10 @@ public:
   bool publishSphere(const geometry_msgs::Pose &pose, const colors &color, const double scale,
                      const std::string &ns = "Sphere", const std::size_t &id = 0);
   bool publishSphere(const geometry_msgs::Pose &pose, const colors &color, const geometry_msgs::Vector3 scale,
+                     const std::string &ns = "Sphere", const std::size_t &id = 0);
+  bool publishSphere(const geometry_msgs::Pose &pose, const std_msgs::ColorRGBA &color,
+                     const geometry_msgs::Vector3 scale, const std::string &ns = "Sphere", const std::size_t &id = 0);
+  bool publishSphere(const Eigen::Affine3d &pose, const std_msgs::ColorRGBA &color, const geometry_msgs::Vector3 scale,
                      const std::string &ns = "Sphere", const std::size_t &id = 0);
   bool publishSphere(const geometry_msgs::PoseStamped &pose, const colors &color, const geometry_msgs::Vector3 scale,
                      const std::string &ns = "Sphere", const std::size_t &id = 0);
@@ -479,7 +516,7 @@ public:
    * \return true on success
    */
   bool publishArrow(const Eigen::Affine3d &pose, const colors &color = BLUE, const scales &scale = REGULAR,
-                    double length = 0.1);
+                    double length = 0.1, const std::size_t &id = 0);
   bool publishArrow(const geometry_msgs::Pose &pose, const colors &color = BLUE, const scales &scale = REGULAR,
                     double length = 0.1, const std::size_t &id = 0);
   bool publishArrow(const geometry_msgs::PoseStamped &pose, const colors &color = BLUE, const scales &scale = REGULAR,
@@ -493,8 +530,9 @@ public:
    * \return true on success
    */
   bool publishCuboid(const Eigen::Vector3d &point1, const Eigen::Vector3d &point2, const colors &color = BLUE);
-  bool publishCuboid(const geometry_msgs::Point &point1, const geometry_msgs::Point &point2,
-                     const colors &color = BLUE);
+  bool publishCuboid(const geometry_msgs::Point &point1, const geometry_msgs::Point &point2, const colors &color = BLUE,
+                     const std::string &ns = "Cuboid", const std::size_t &id = 0);
+
   /**
    * \brief Display a rectangular cuboid
    * \param pose - pose of the box
@@ -521,8 +559,16 @@ public:
                    const scales &scale = REGULAR);
   bool publishLine(const Eigen::Vector3d &point1, const Eigen::Vector3d &point2, const colors &color = BLUE,
                    const scales &scale = REGULAR);
+  bool publishLine(const Eigen::Vector3d &point1, const Eigen::Vector3d &point2, const std_msgs::ColorRGBA &color,
+                   const scales &scale = REGULAR);
+  bool publishLine(const Eigen::Vector3d &point1, const Eigen::Vector3d &point2, const std_msgs::ColorRGBA &color,
+                   const double &radius);
   bool publishLine(const geometry_msgs::Point &point1, const geometry_msgs::Point &point2, const colors &color = BLUE,
                    const scales &scale = REGULAR);
+  bool publishLine(const geometry_msgs::Point &point1, const geometry_msgs::Point &point2,
+                   const std_msgs::ColorRGBA &color, const scales &scale = REGULAR);
+  bool publishLine(const geometry_msgs::Point &point1, const geometry_msgs::Point &point2,
+                   const std_msgs::ColorRGBA &color, const geometry_msgs::Vector3 &scale);
 
   /**
    * \brief Display a marker of a series of connected lines
@@ -534,6 +580,9 @@ public:
    */
   bool publishPath(const std::vector<geometry_msgs::Point> &path, const colors &color = RED,
                    const scales &scale = REGULAR, const std::string &ns = "Path");
+
+  bool publishPath(const std::vector<Eigen::Vector3d> &path, const colors &color = RED, const double radius = 0.01,
+                   const std::string &ns = "Path");
 
   /**
    * \brief Display a marker of a polygon
@@ -552,8 +601,10 @@ public:
    * \param color - an enum pre-defined name of a color
    * \param size - height=width=depth=size
    * \return true on success
+   * DEPRECATED - use publishCuboid
    */
   bool publishBlock(const geometry_msgs::Pose &pose, const colors &color = BLUE, const double &block_size = 0.1);
+  RVIZ_VISUAL_TOOLS_DEPRECATED
   bool publishBlock(const Eigen::Affine3d &pose, const colors &color = BLUE, const double &block_size = 0.1);
 
   /**
@@ -624,6 +675,19 @@ public:
 
   /**
    * \brief Display a marker of a cylinder
+   * \param point1 - starting side of cylinder
+   * \param point2 - end side of cylinder
+   * \param color - an enum pre-defined name of a color
+   * \param radius - geometry of cylinder
+   * \return true on success
+   */
+  bool publishCylinder(const Eigen::Vector3d &point1, const Eigen::Vector3d &point2, const colors &color = BLUE,
+                       double radius = 0.01, const std::string &ns = "Cylinder");
+  bool publishCylinder(const Eigen::Vector3d &point1, const Eigen::Vector3d &point2, const std_msgs::ColorRGBA &color,
+                       double radius = 0.01, const std::string &ns = "Cylinder");
+
+  /**
+   * \brief Display a marker of a cylinder
    * \param pose - the location to publish the marker with respect to the base frame
    * \param color - an enum pre-defined name of a color
    * \param height - geometry of cylinder
@@ -633,6 +697,8 @@ public:
   bool publishCylinder(const Eigen::Affine3d &pose, const colors &color = BLUE, double height = 0.1,
                        double radius = 0.01, const std::string &ns = "Cylinder");
   bool publishCylinder(const geometry_msgs::Pose &pose, const colors &color = BLUE, double height = 0.1,
+                       double radius = 0.01, const std::string &ns = "Cylinder");
+  bool publishCylinder(const geometry_msgs::Pose &pose, const std_msgs::ColorRGBA &color, double height = 0.1,
                        double radius = 0.01, const std::string &ns = "Cylinder");
 
   /**
@@ -663,7 +729,7 @@ public:
   /**
    * \brief Display a marker of a text
    * \param pose - the location to publish the marker with respect to the base frame
-   * \param text - what to display
+   * \param text - what message to display
    * \param color - an enum pre-defined name of a color
    * \param scale - an enum pre-defined name of a size
    * \param static_id - if true, only one text can be published at a time
@@ -671,10 +737,10 @@ public:
    */
   bool publishText(const Eigen::Affine3d &pose, const std::string &text, const colors &color = WHITE,
                    const scales &scale = REGULAR, bool static_id = true);
-
+  bool publishText(const Eigen::Affine3d &pose, const std::string &text, const colors &color,
+                   const geometry_msgs::Vector3 scale, bool static_id = true);
   bool publishText(const geometry_msgs::Pose &pose, const std::string &text, const colors &color = WHITE,
                    const scales &scale = REGULAR, bool static_id = true);
-
   bool publishText(const geometry_msgs::Pose &pose, const std::string &text, const colors &color,
                    const geometry_msgs::Vector3 scale, bool static_id = true);
 
@@ -682,6 +748,7 @@ public:
    * \brief Run a simple test of all visual_tool's features
    * \return true on success
    */
+  RVIZ_VISUAL_TOOLS_DEPRECATED
   bool publishTests();
 
   /**
@@ -716,12 +783,10 @@ public:
   Eigen::Affine3d convertPoint32ToPose(const geometry_msgs::Point32 &point);
 
   /**
-   * \brief
-   * \param input - description
-   * \param input - description
-   * \return
+   * \brief Add an identity rotation matrix to make a point have a full pose
    */
   geometry_msgs::Pose convertPointToPose(const geometry_msgs::Point &point);
+  Eigen::Affine3d convertPointToPose(const Eigen::Vector3d &point);
 
   /**
    * \brief Convert an Eigen pose to a geometry_msg point
@@ -811,6 +876,15 @@ public:
   void generateEmptyPose(geometry_msgs::Pose &pose);
 
   /**
+   * \brief Test if two Eigen poses are close enough
+   * \param pose1
+   * \param pose2
+   * \param threshold - how close in value they must be in order to be considered the same
+   * \return true if equal
+   */
+  bool posesEqual(const Eigen::Affine3d &pose1, const Eigen::Affine3d &pose2, const double &threshold = 0.000001);
+
+  /**
    * \brief Get random between min and max
    */
   static double dRand(double min, double max);
@@ -826,6 +900,18 @@ public:
    * \brief Display in the console a transform in roll pitch yaw
    */
   static void printTransformRPY(const Eigen::Affine3d &transform);
+
+  /** \brief Getter for PsychedelicMode */
+  const bool &getPsychedelicMode() const
+  {
+    return psychedelic_mode_;
+  }
+
+  /** \brief Setter for PsychedelicMode */
+  void setPsychedelicMode(const bool &psychedelic_mode = true)
+  {
+    psychedelic_mode_ = psychedelic_mode;
+  }
 
 protected:
   /**
@@ -849,6 +935,8 @@ protected:
 
   // ROS publishers
   ros::Publisher pub_rviz_markers_;  // for rviz visualization markers
+  bool pub_rviz_markers_connected_;
+  bool pub_rviz_markers_waited_;
 
   // Strings
   std::string marker_topic_;  // topic to publish to rviz
@@ -875,7 +963,7 @@ protected:
   visualization_msgs::Marker mesh_marker_;
   visualization_msgs::Marker text_marker_;
   visualization_msgs::Marker cuboid_marker_;
-  visualization_msgs::Marker line_marker_;
+  visualization_msgs::Marker line_strip_marker_;
   visualization_msgs::Marker line_list_marker_;
   visualization_msgs::Marker spheres_marker_;
   visualization_msgs::Marker reset_marker_;
@@ -887,6 +975,9 @@ protected:
   geometry_msgs::Point32 shared_point32_msg_;
   Eigen::Affine3d shared_pose_eigen_;
   Eigen::Vector3d shared_point_eigen_;
+
+  // Just for fun.
+  bool psychedelic_mode_;
 };  // class
 
 typedef boost::shared_ptr<RvizVisualTools> RvizVisualToolsPtr;
