@@ -1,3 +1,26 @@
+## rviz_visual_tools (jade) - 2.2.0-0
+
+The packages in the `rviz_visual_tools` repository were released into the `jade` distro by running `/usr/bin/bloom-release rviz_visual_tools -t jade -r jade` on `Thu, 28 Apr 2016 20:37:25 -0000`
+
+The `rviz_visual_tools` package was released.
+
+Version of package(s) in repository `rviz_visual_tools`:
+
+- upstream repository: https://github.com/davetcoleman/rviz_visual_tools.git
+- release repository: https://github.com/davetcoleman/rviz_visual_tools-release.git
+- rosdistro version: `2.1.0-0`
+- old version: `2.1.0-0`
+- new version: `2.2.0-0`
+
+Versions of tools used:
+
+- bloom version: `0.5.21`
+- catkin_pkg version: `0.2.10`
+- rosdep version: `0.11.4`
+- rosdistro version: `0.4.7`
+- vcstools version: `0.1.38`
+
+
 ## rviz_visual_tools (jade) - 2.1.0-0
 
 The packages in the `rviz_visual_tools` repository were released into the `jade` distro by running `/usr/bin/bloom-release rviz_visual_tools -t jade -r jade` on `Tue, 09 Feb 2016 22:12:55 -0000`
