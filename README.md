@@ -1,39 +1,33 @@
 # Rviz Visual Tools
 
-C++ API wrapper for displaying shapes and meshes in Rviz via helper functions that publish markers. Useful for displaying and debugging data. For more advanced robot visualization features, see the [moveit_visual_tools](https://github.com/davetcoleman/moveit_visual_tools) which builds on this class, or [ompl_visual_tools](https://github.com/davetcoleman/ompl_visual_tools/) if you are an OMPL ROS user.
+Helper functions for displaying and debugging data in Rviz via published markers.
 
 This package includes:
 
- - Easy to use helper functions for visualizing in Rviz fast
  - Basic geometric markers for Rviz
- - More complex geometric shapes such as coordinate frames, framed boxes, planes, paths, graphs
- - Ability to quickly choose standard colors and sizes
- - Tools to ensure proper connection to Rviz before publishing visualizations
- - Shortcuts to convert between different types of points and poses - ROS msgs, Eigen, tf, etc
- - Batch publishing capabilities to reduce over throttling ROS messages
  - A tf publishing helper class
 
-Developed by [Dave Coleman](http://dav.ee) at the Correll Robotics Lab, University of Colorado Boulder with help from Andy McEvoy and many others.
+Developed by [Dave Coleman](http://dav.ee) at the Correll Robotics Lab, University of Colorado Boulder with help from Andy McEvoy and others.
 
  * [![Build Status](https://travis-ci.org/davetcoleman/rviz_visual_tools.svg)](https://travis-ci.org/davetcoleman/rviz_visual_tools) Travis CI
  * [![Build Status](http://build.ros.org/buildStatus/icon?job=Jsrc_uT__rviz_visual_tools__ubuntu_trusty__source)](http://build.ros.org/view/Jsrc_uT/job/Jsrc_uT__rviz_visual_tools__ubuntu_trusty__source/) ROS Buildfarm - Trusty Devel Source Build
  * [![Build Status](http://build.ros.org/buildStatus/icon?job=Jbin_uT64__rviz_visual_tools__ubuntu_trusty_amd64__binary)](http://build.ros.org/view/Jbin_uT64/job/Jbin_uT64__rviz_visual_tools__ubuntu_trusty_amd64__binary/) ROS Buildfarm - AMD64 Trusty Debian Build
 
-![](resources/screenshot.png)
+![](resources/screenshot1.png)
 
 ## Install
 
 ### Ubuntu Debian
 
 ```
-sudo apt-get install ros-kinetic-rviz-visual-tools
+sudo apt-get install ros-indigo-rviz-visual-tools
 ```
 
 ### Build from Source
 
 Clone this repository into a catkin workspace, then use the rosdep install tool to automatically download its dependencies. Depending on your current version of ROS, use:
 ```
-rosdep install --from-paths src --ignore-src --rosdistro kinetic
+rosdep install --from-paths src --ignore-src --rosdistro indigo
 ```
 
 ## Quick Start Demo
@@ -48,7 +42,7 @@ Then start demo:
 
 ## Code API
 
-See [the Doxygen documentation](http://docs.ros.org/kinetic/api/rviz_visual_tools/html/annotated.html)
+See [VisualTools Class Reference](http://docs.ros.org/indigo/api/rviz_visual_tools/html/classrviz__visual__tools_1_1VisualTools.html)
 
 ## Usage
 
@@ -58,18 +52,18 @@ We'll assume you will be using these helper functions within a class. Almost all
 
 Add to your includes:
 ```
-#include <rviz_visual_tools/rviz_visual_tools.h>
+#include <rviz_visual_tools/visual_tools.h>
 ```
 
 Add to your class's member variables:
 ```
 // For visualizing things in rviz
-rviz_visual_tools::RvizVisualToolsPtr visual_tools_;
+rviz_visual_tools::VisualToolsPtr visual_tools_;
 ```
 
 In your class' constructor add:
 ```
-visual_tools_.reset(new rviz_visual_tools::RvizVisualTools("base_frame","/rviz_visual_markers"));
+visual_tools_.reset(new rviz_visual_tools::VisualTools("base_frame","/rviz_visual_markers"));
 ```
 
 Change the first parameter to the name of your robot's base frame, and the second parameter to whatever name you'd like to use for the corresponding Rviz marker ROS topic.

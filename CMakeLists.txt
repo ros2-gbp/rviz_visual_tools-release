@@ -1,16 +1,6 @@
 cmake_minimum_required(VERSION 2.8.3)
 project(rviz_visual_tools)
 
-# C++ 11
-add_definitions(-std=c++11)
-
-# Warnings
-add_definitions(-W -Wall -Wextra
-  #-Wcast-qual
-  -Wwrite-strings -Wunreachable-code -Wpointer-arith
-  -Winit-self -Wredundant-decls
-  -Wno-unused-parameter -Wno-unused-function)
-
 find_package(catkin REQUIRED COMPONENTS
   cmake_modules
   eigen_conversions
@@ -23,25 +13,24 @@ find_package(catkin REQUIRED COMPONENTS
   trajectory_msgs
   visualization_msgs
   roslint
-  eigen_stl_containers
 )
 
-find_package(Eigen3 REQUIRED)
+find_package(Eigen REQUIRED)
 find_package(Boost REQUIRED thread system)
 
 catkin_package(
   LIBRARIES
     ${PROJECT_NAME}
   CATKIN_DEPENDS
+    eigen_conversions
     geometry_msgs
     visualization_msgs
     graph_msgs
     std_msgs
+    tf_conversions
     trajectory_msgs
   INCLUDE_DIRS include
 )
-
-include_directories(SYSTEM ${EIGEN3_INCLUDE_DIRS})
 
 include_directories(
   include
