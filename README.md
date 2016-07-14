@@ -1,5 +1,4 @@
-Rviz Visual Tools
-==========================
+# Rviz Visual Tools
 
 Helper functions for displaying and debugging data in Rviz via published markers.
 
@@ -14,7 +13,7 @@ Developed by [Dave Coleman](http://dav.ee) at the Correll Robotics Lab, Universi
  * [![Build Status](http://build.ros.org/buildStatus/icon?job=Jsrc_uT__rviz_visual_tools__ubuntu_trusty__source)](http://build.ros.org/view/Jsrc_uT/job/Jsrc_uT__rviz_visual_tools__ubuntu_trusty__source/) ROS Buildfarm - Trusty Devel Source Build
  * [![Build Status](http://build.ros.org/buildStatus/icon?job=Jbin_uT64__rviz_visual_tools__ubuntu_trusty_amd64__binary)](http://build.ros.org/view/Jbin_uT64/job/Jbin_uT64__rviz_visual_tools__ubuntu_trusty_amd64__binary/) ROS Buildfarm - AMD64 Trusty Debian Build
 
-<img align="right" src="https://raw.github.com/davetcoleman/rviz_visual_tools/indigo-devel/resources/screenshot.png" />
+![](resources/screenshot1.png)
 
 ## Install
 
@@ -24,7 +23,7 @@ Developed by [Dave Coleman](http://dav.ee) at the Correll Robotics Lab, Universi
 sudo apt-get install ros-indigo-rviz-visual-tools
 ```
 
-### Install From Source
+### Build from Source
 
 Clone this repository into a catkin workspace, then use the rosdep install tool to automatically download its dependencies. Depending on your current version of ROS, use:
 ```
@@ -33,9 +32,13 @@ rosdep install --from-paths src --ignore-src --rosdistro indigo
 
 ## Quick Start Demo
 
-To see random shapes generated in Rviz:
+To see random shapes generated in Rviz, first launch Rviz:
 
-    roslaunch rviz_visual_tools visual_tools_demo.launch
+    roslaunch rviz_visual_tools demo_rviz.launch
+
+Then start demo:
+
+    roslaunch rviz_visual_tools demo.launch
 
 ## Code API
 
@@ -121,6 +124,12 @@ Reset function
 
  - ``deleteAllMarkers`` - tells Rviz to clear out all current markers from being displayed.
 
+Batch publish - useful for when many markers need to be published at once to prevent buffer overflow of ROS messages.
+
+ - enableBatchPublishing()
+ - triggerBatchPublish()
+ - triggerBatchPublishAndDisable()
+
 Conversion functions
 
  - convertPose
@@ -173,7 +182,10 @@ This package helps you quickly choose colors - feel free to send PRs with more c
     XSMALL,
     SMALL,
     REGULAR,
-    LARGE, xLARGE, xxLARGE, xxxLARGE,
+    LARGE,
+    xLARGE,
+    xxLARGE,
+    xxxLARGE,
     XLARGE,
     XXLARGE
 
@@ -202,14 +214,6 @@ To run [catkin lint](https://pypi.python.org/pypi/catkin_lint), use the followin
 Use the following command with [catkin-tools](https://catkin-tools.readthedocs.org/) to run the small amount of available tests:
 
     catkin run_tests --no-deps --this -i
-
-## Developers Notes
-
-Useful notes for anyone wanting to dig in deeper:
-
- -  All poses are published with respect to the world frame e.g. /world, /odom, or maybe /base
- -  All publish() ROS topics should be followed by a ``ros::spinOnce();`` but no sleep
- -  Do not load any features/publishers until they are actually needed since this library contains so many components
 
 ## Contribute
 
