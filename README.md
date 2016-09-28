@@ -54,6 +54,8 @@ See [the Doxygen documentation](http://docs.ros.org/kinetic/api/rviz_visual_tool
 
 We'll assume you will be using these helper functions within a class. Almost all of the functions assume you are publishing transforms in the world frame (whatever you call that e.g. /odom).
 
+**Note: a recent change requires that all publishing must now be triggered by ``trigger()``**
+
 ### Initialize
 
 Add to your includes:
@@ -93,6 +95,8 @@ In the following snippet we create a pose at xyz (0.1, 0.1, 0.1) and rotate the 
     ROS_INFO_STREAM_NAMED("test","Publishing Arrow");
     visual_tools_->publishArrow(pose, rviz_visual_tools::RED, rviz_visual_tools::LARGE);
 
+    // Don't forget to trigger the publisher!
+    visual_tools_->trigger();
 
 ### Basic Publishing Functions
 
@@ -130,11 +134,10 @@ Reset function
 
  - ``deleteAllMarkers`` - tells Rviz to clear out all current markers from being displayed.
 
-Batch publish - useful for when many markers need to be published at once to prevent buffer overflow of ROS messages.
+All markers must be triggered after being published, by calling the ``trigger()`` function. This allows batch publishing to be achieved by only calling after several markers have been created, greatly increasing the speed of your application. You can even explicitly tell ``rviz_visual_tools`` how often to publish via the ``triggerEvery(NUM_MARKERS)`` command:
 
- - enableBatchPublishing()
- - triggerBatchPublish()
- - triggerBatchPublishAndDisable()
+ - trigger()
+ - triggerEvery(20)
 
 Conversion functions
 
@@ -195,10 +198,6 @@ This package helps you quickly choose colors - feel free to send PRs with more c
     XLARGE,
     XXLARGE
 
-## Batch Publishing
-
-There is a new feature that allows markers to be saved up in an array until a trigger is recieved to send all markers to Rviz for visualization. This is useful when many markers need to be published at once that can overflow the Rviz message buffers. To enable, use ``enableBatchPublishing(true)`` and to trigger use ``triggerBatchPublish()`.
-
 ## TF Visual Tools
 
 This tool lets you easily debug Eigen transforms in Rviz. Demo use:
@@ -220,6 +219,21 @@ To run [catkin lint](https://pypi.python.org/pypi/catkin_lint), use the followin
 Use the following command with [catkin-tools](https://catkin-tools.readthedocs.org/) to run the small amount of available tests:
 
     catkin run_tests --no-deps --this -i
+
+## Docker Image
+
+[Dockerhub](https://hub.docker.com/r/davetcoleman/rviz_visual_tools/builds/) automatically creates a Docker for this repo. To run with GUI:
+
+    # This is not the safest way however, as you then compromise the access control to X server on your host
+    xhost +local:root # for the lazy and reckless
+    docker run -it --env="DISPLAY" --env="QT_X11_NO_MITSHM=1" --volume="/tmp/.X11-unix:/tmp/.X11-unix:rw" davetcoleman/rviz_visual_tools:kinetic
+    export containerId=$(docker ps -l -q)
+    # Close security hole:
+    xhost -local:root
+
+(Optional) To build the docker image locally for this repo, run in base of package:
+
+    docker build -t davetcoleman/rviz_visual_tools:kinetic .
 
 ## Contribute
 
