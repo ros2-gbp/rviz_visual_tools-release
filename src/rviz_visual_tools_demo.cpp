@@ -69,6 +69,9 @@ public:
   {
     visual_tools_.reset(new rvt::RvizVisualTools("base", "/rviz_visual_tools"));
 
+    ROS_INFO("Sleeping 5 seconds before running demo");
+    ros::Duration(5.0).sleep();
+
     // Clear messages
     visual_tools_->deleteAllMarkers();
     visual_tools_->enableBatchPublishing();
@@ -105,7 +108,7 @@ public:
         publishLabelHelper(pose1, "Sphere Color Range");
       pose1.translation().x() += step;
     }
-    visual_tools_->triggerBatchPublish();
+    visual_tools_->trigger();
 
     // --------------------------------------------------------------------
     ROS_INFO_STREAM_NAMED(name_, "Displaying Coordinate Axis");
@@ -124,7 +127,7 @@ public:
               Eigen::AngleAxisd(step * 2 * M_PI, Eigen::Vector3d::UnitY()) *
               Eigen::AngleAxisd(step * 2 * M_PI, Eigen::Vector3d::UnitZ());
     }
-    visual_tools_->triggerBatchPublish();
+    visual_tools_->trigger();
 
     // --------------------------------------------------------------------
     ROS_INFO_STREAM_NAMED(name_, "Displaying Arrows");
@@ -141,7 +144,7 @@ public:
       pose1.translation().x() += step;
       pose1 = pose1 * Eigen::AngleAxisd(step * 2 * M_PI, Eigen::Vector3d::UnitZ());
     }
-    visual_tools_->triggerBatchPublish();
+    visual_tools_->trigger();
 
     // --------------------------------------------------------------------
     ROS_INFO_STREAM_NAMED(name_, "Displaying Rectangular Cuboid");
@@ -166,7 +169,7 @@ public:
 
       pose1.translation().x() += step;
     }
-    visual_tools_->triggerBatchPublish();
+    visual_tools_->trigger();
 
     // --------------------------------------------------------------------
     ROS_INFO_STREAM_NAMED(name_, "Displaying Lines");
@@ -191,7 +194,7 @@ public:
 
       pose1.translation().x() += step;
     }
-    visual_tools_->triggerBatchPublish();
+    visual_tools_->trigger();
 
     // --------------------------------------------------------------------
     ROS_INFO_STREAM_NAMED(name_, "Displaying Cylinder");
@@ -208,7 +211,7 @@ public:
       pose1.translation().x() += step;
       pose1 = pose1 * Eigen::AngleAxisd(step * 2 * M_PI, Eigen::Vector3d::UnitZ());
     }
-    visual_tools_->triggerBatchPublish();
+    visual_tools_->trigger();
 
     // --------------------------------------------------------------------
     ROS_INFO_STREAM_NAMED(name_, "Displaying Axis Cone");
@@ -230,7 +233,7 @@ public:
       pose1 = pose1 * Eigen::AngleAxisd(step*2*M_PI, Eigen::Vector3d::UnitZ());
       angle +=angle_step;
     }
-    visual_tools_->triggerBatchPublish();
+    visual_tools_->trigger();
 
     // --------------------------------------------------------------------
     ROS_INFO_STREAM_NAMED(name_, "Displaying Wireframe Cuboid");
@@ -251,7 +254,7 @@ public:
       pose1.translation().x() += step;
       pose1 = pose1 * Eigen::AngleAxisd(step * 2 * M_PI, Eigen::Vector3d::UnitZ());
     }
-    visual_tools_->triggerBatchPublish();
+    visual_tools_->trigger();
 
     // --------------------------------------------------------------------
     ROS_INFO_STREAM_NAMED(name_, "Displaying Sized Wireframe Cuboid");
@@ -269,7 +272,7 @@ public:
       pose1.translation().x() += step;
       pose1 = pose1 * Eigen::AngleAxisd(step * 2 * M_PI, Eigen::Vector3d::UnitZ());
     }
-    visual_tools_->triggerBatchPublish();
+    visual_tools_->trigger();
 
     // --------------------------------------------------------------------
     ROS_INFO_STREAM_NAMED(name_, "Displaying Planes");
@@ -289,7 +292,7 @@ public:
 
       pose1.translation().x() += step;
     }
-    visual_tools_->triggerBatchPublish();
+    visual_tools_->trigger();
 
     // --------------------------------------------------------------------
     ROS_INFO_STREAM_NAMED(name_, "Displaying Graph");
@@ -313,7 +316,7 @@ public:
       pose1.translation().z() += visual_tools_->dRand(-0.1, 0.1);
     }
     visual_tools_->publishGraph(graph, rvt::ORANGE, 0.005);
-    visual_tools_->triggerBatchPublish();
+    visual_tools_->trigger();
 
     // --------------------------------------------------------------------
     // TODO(davetcoleman): publishMesh
@@ -339,7 +342,7 @@ public:
         * Eigen::AngleAxisd(step*2*M_PI, Eigen::Vector3d::UnitY())
         * Eigen::AngleAxisd(step*2*M_PI, Eigen::Vector3d::UnitZ());
     }
-    visual_tools_->triggerBatchPublish();
+    visual_tools_->trigger();
 
     // --------------------------------------------------------------------
     ROS_INFO_STREAM_NAMED(name_, "Displaying Multi-Color Path");
@@ -372,7 +375,7 @@ public:
         publishLabelHelper(pose1, "Path");
     }
     visual_tools_->publishPath(path, colors);
-    visual_tools_->triggerBatchPublish();
+    visual_tools_->trigger();
 
     // Set x location for next visualization function
     x_location += 1.25;
@@ -499,7 +502,7 @@ public:
     pose1.translation().y() += step;
 
     // Display test
-    visual_tools_->triggerBatchPublish();
+    visual_tools_->trigger();
 
     // Set x location for next visualization function
     x_location += 0.5;
@@ -539,7 +542,7 @@ public:
     }
 
     // Display test
-    visual_tools_->triggerBatchPublish();
+    visual_tools_->trigger();
 
     // Set x location for next visualization function
     x_location += 0.5;
