@@ -2,20 +2,116 @@
 Changelog for package rviz_visual_tools
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-2.2.1 (2016-07-14)
+3.3.0 (2016-09-28)
 ------------------
+* BREAKING CHANGE: Make batch publishing enabled by default
+* Removed enableInternalBatchPublishing()
+* Removed triggerInternalBatchPublishAndDisable()
+* Deprecated triggerBatchPublish() in favor of function name trigger()
+* Deprecated triggerBatchPublishAndDisable()
+* Ability to trigger every x markers that are in queue, ideal in for loops
+* New waitForMarkerPub() function that takes timeout
+* Add std::move
+* Added Docker for Kinetic
+* Added delay to demo to allow rviz to load in Docker
+* Change the sphere marker type from SPHERE_LIST to SPHERE - This makes irregularly scaled spheres (i.e. ellipsoids) to be rendered correctly.
+* Contributors: Dave Coleman, Miguel Prada
+
+3.2.0 (2016-07-14)
+------------------
+* Catkin depend on eigen and tf conversions
+* New warning
+* Added EulerConvention enum
+* Added new convertFromXYZRPY() function
+* Added new tests
+* Contributors: Dave Coleman, Enrique Fernandez
+
+3.1.0 (2016-07-06)
+------------------
+* Switched publishPath() to use cylinders
+* Added new publishLineStrip() function
+* Added new publishPath() functions
+* Added new publishAxis() functions
+* Update screenshot
+* Broke publishPath() API for recent addition - incorrect Eigen vector used
+* New publishPath() function for Affine3d
+* New publishAxis() functions that use scale
+* New publishAxisInternal() function for more efficient publishing
+* New publishAxisPath() function for showing a series of coordinate axis
+* Added warning for batch publishing when not enabled
+* Bug fix in publishLines() for id incrementing
+* New scaleToString() function
+* Bug fix for scaling in coordinate axis
+* Improved demo to have multiple scales visualized
+* Revert "Remove graph msgs"
+* Contributors: Dave Coleman
+
+3.0.0 (2016-06-29)
+------------------
+* Improve Travis script
+* Upgrade to Eigen3 per ROS Kinetic requirements
+* New screenshot
+* Refactored entire scaling method - all sizes of shapes have been affected
+* Renamed scales
+* Removed const reference for primitive types in function headers
+* Cleaned up getScale() function
+* New publishSpheres function
+* Two new tests & screenshot
+* Deprecated size REGULAR
+* Number scale sizes
+* New intToRvizScale() function
+* New publishSpheres() functions for showing list of lines AND colors
+* New publishLines() functions for using LINE_LIST
+* New publishCylinder() function that uses scales
+* Bug fix for getVectorBetweenPoints() when vector is all zeros
+* New printTranslation() function
+* added intToRvizColor() for interfaces that do not directly depend on Rviz Visual Tools, such as OMPL
+* publishPath with vector of colors
+* Update demo
+* New variant of publishPath with vector of colors
+* New publishSphere() helper
+* Add eigen_stl_containers
+* Add missing breaks in switch statement
+* Add namespace to ease debugging ROS messages
+* Do not pass Eigen structures by value
+* Fix all vector<Eigen> to EigenSTL::vector_Vector3d as recommended by @VictorLamoine
+* Hide upstream package cast warning
+* Overload new operator for Eigen structures
+* Changing the angles will change the opening angle of the cone
+* Better way to turn on C++11, maybe?
+* Removed deprecated code for Kinetic
+* Began converting to C++11
+* Fix dead link to the documentation
+* New waitForMarkerPub() function
+* Fix bug in waitForSubscriber() introduced in previous commit
+* Added blocking constraint option in function waitForSubscriber
+* New publishLine() variant
+* ID for publishing rectangles
+* Optimize clearing and resizing vectors
+* Increase random color sampling attempts
+* Move variable declaration
 * Latched publisher
 * publishAxisLabeled arguments
+* Include path, boost typedef and class name are now up to date with the code.
+* New publishLine() variant
+* Optional latched publisher
+* ID for publishing rectangles
+* Optimize clearing and resizing vectors
+* Increase random color sampling attempts
+* Move variable declaration
 * publishAxisLabeled arguments order
-* Remove TODO msg
 * Adds Publish Labeled Axis
+* Contributors: Abhijit Makhal, Dave Coleman, Naveed Usmani, Sow Papa Libasse, Victor Lamoine
+
+2.2.0 (2016-04-28)
+------------------
+* Created much better demo, added new screenshot
 * Numbered colors so that they can be matched in OMPL
 * New publishLine() function variants
 * Psychedelic mode
 * Prevent publishing empty marker arrays
 * Improved warning and error correction
 * New publishSphere function
-* Hide debug message
 * Ability to set marker topic after constructor
 * Ability to force waiting for topic to connect
 * Added new posesEqual() function
@@ -26,8 +122,6 @@ Changelog for package rviz_visual_tools
 * New publishText function
 * Removed redundant namespace names
 * New convertPointToPose function
-* README
-* Created much better demo, added new screenshot
 * Reduced output
 * Renamed line_marker\_ to line_strip_marker\_
 * Faster method for waiting for subscriber thread
@@ -36,7 +130,7 @@ Changelog for package rviz_visual_tools
 * Change getColorScale to work from 0->1 instead of 0->100
 * Additional parameters to publishCuboid()
 * New color scale function for generated interpolated colors from RED->GREEN (1->100)
-* Contributors: Dave Coleman, Enrique Fernandez, Naveed Usmani
+* Contributors: Dave Coleman
 
 2.1.0 (2016-02-09)
 ------------------

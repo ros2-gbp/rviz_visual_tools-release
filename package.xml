@@ -1,8 +1,8 @@
 <?xml version="1.0"?>
 <package>
   <name>rviz_visual_tools</name>
-  <version>2.2.1</version>
-  <description>Helper functions for displaying and debugging data in Rviz via published markers</description>
+  <version>3.3.0</version>
+  <description>Utility functions for displaying and debugging data in Rviz via published markers</description>
 
   <maintainer email="davetcoleman@gmail.com">Dave Coleman</maintainer>
   <maintainer email="mcevoy.andy@gmail.com">Andy McEvoy</maintainer>
@@ -27,6 +27,7 @@
   <build_depend>trajectory_msgs</build_depend>
   <build_depend>cmake_modules</build_depend>
   <build_depend>roslint</build_depend>
+  <build_depend>eigen_stl_containers</build_depend>
 
   <test_depend>rostest</test_depend>
   <test_depend>rosunit</test_depend>

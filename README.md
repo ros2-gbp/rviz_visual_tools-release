@@ -1,33 +1,39 @@
 # Rviz Visual Tools
 
-Helper functions for displaying and debugging data in Rviz via published markers.
+C++ API wrapper for displaying shapes and meshes in Rviz via helper functions that publish markers. Useful for displaying and debugging data. For more advanced robot visualization features, see the [moveit_visual_tools](https://github.com/davetcoleman/moveit_visual_tools) which builds on this class, or [ompl_visual_tools](https://github.com/davetcoleman/ompl_visual_tools/) if you are an OMPL ROS user.
 
 This package includes:
 
+ - Easy to use helper functions for visualizing in Rviz fast
  - Basic geometric markers for Rviz
+ - More complex geometric shapes such as coordinate frames, framed boxes, planes, paths, graphs
+ - Ability to quickly choose standard colors and sizes
+ - Tools to ensure proper connection to Rviz before publishing visualizations
+ - Shortcuts to convert between different types of points and poses - ROS msgs, Eigen, tf, etc
+ - Batch publishing capabilities to reduce over throttling ROS messages
  - A tf publishing helper class
 
-Developed by [Dave Coleman](http://dav.ee) at the Correll Robotics Lab, University of Colorado Boulder with help from Andy McEvoy and others.
+Developed by [Dave Coleman](http://dav.ee) at the Correll Robotics Lab, University of Colorado Boulder with help from Andy McEvoy and many others.
 
  * [![Build Status](https://travis-ci.org/davetcoleman/rviz_visual_tools.svg)](https://travis-ci.org/davetcoleman/rviz_visual_tools) Travis CI
  * [![Build Status](http://build.ros.org/buildStatus/icon?job=Jsrc_uT__rviz_visual_tools__ubuntu_trusty__source)](http://build.ros.org/view/Jsrc_uT/job/Jsrc_uT__rviz_visual_tools__ubuntu_trusty__source/) ROS Buildfarm - Trusty Devel Source Build
  * [![Build Status](http://build.ros.org/buildStatus/icon?job=Jbin_uT64__rviz_visual_tools__ubuntu_trusty_amd64__binary)](http://build.ros.org/view/Jbin_uT64/job/Jbin_uT64__rviz_visual_tools__ubuntu_trusty_amd64__binary/) ROS Buildfarm - AMD64 Trusty Debian Build
 
-![](resources/screenshot1.png)
+![](resources/screenshot.png)
 
 ## Install
 
 ### Ubuntu Debian
 
 ```
-sudo apt-get install ros-indigo-rviz-visual-tools
+sudo apt-get install ros-kinetic-rviz-visual-tools
 ```
 
 ### Build from Source
 
 Clone this repository into a catkin workspace, then use the rosdep install tool to automatically download its dependencies. Depending on your current version of ROS, use:
 ```
-rosdep install --from-paths src --ignore-src --rosdistro indigo
+rosdep install --from-paths src --ignore-src --rosdistro kinetic
 ```
 
 ## Quick Start Demo
@@ -42,28 +48,30 @@ Then start demo:
 
 ## Code API
 
-See [VisualTools Class Reference](http://docs.ros.org/indigo/api/rviz_visual_tools/html/classrviz__visual__tools_1_1VisualTools.html)
+See [the Doxygen documentation](http://docs.ros.org/kinetic/api/rviz_visual_tools/html/annotated.html)
 
 ## Usage
 
 We'll assume you will be using these helper functions within a class. Almost all of the functions assume you are publishing transforms in the world frame (whatever you call that e.g. /odom).
 
+**Note: a recent change requires that all publishing must now be triggered by ``trigger()``**
+
 ### Initialize
 
 Add to your includes:
 ```
-#include <rviz_visual_tools/visual_tools.h>
+#include <rviz_visual_tools/rviz_visual_tools.h>
 ```
 
 Add to your class's member variables:
 ```
 // For visualizing things in rviz
-rviz_visual_tools::VisualToolsPtr visual_tools_;
+rviz_visual_tools::RvizVisualToolsPtr visual_tools_;
 ```
 
 In your class' constructor add:
 ```
-visual_tools_.reset(new rviz_visual_tools::VisualTools("base_frame","/rviz_visual_markers"));
+visual_tools_.reset(new rviz_visual_tools::RvizVisualTools("base_frame","/rviz_visual_markers"));
 ```
 
 Change the first parameter to the name of your robot's base frame, and the second parameter to whatever name you'd like to use for the corresponding Rviz marker ROS topic.
@@ -87,6 +95,8 @@ In the following snippet we create a pose at xyz (0.1, 0.1, 0.1) and rotate the 
     ROS_INFO_STREAM_NAMED("test","Publishing Arrow");
     visual_tools_->publishArrow(pose, rviz_visual_tools::RED, rviz_visual_tools::LARGE);
 
+    // Don't forget to trigger the publisher!
+    visual_tools_->trigger();
 
 ### Basic Publishing Functions
 
@@ -124,11 +134,10 @@ Reset function
 
  - ``deleteAllMarkers`` - tells Rviz to clear out all current markers from being displayed.
 
-Batch publish - useful for when many markers need to be published at once to prevent buffer overflow of ROS messages.
+All markers must be triggered after being published, by calling the ``trigger()`` function. This allows batch publishing to be achieved by only calling after several markers have been created, greatly increasing the speed of your application. You can even explicitly tell ``rviz_visual_tools`` how often to publish via the ``triggerEvery(NUM_MARKERS)`` command:
 
- - enableBatchPublishing()
- - triggerBatchPublish()
- - triggerBatchPublishAndDisable()
+ - trigger()
+ - triggerEvery(20)
 
 Conversion functions
 
@@ -189,10 +198,6 @@ This package helps you quickly choose colors - feel free to send PRs with more c
     XLARGE,
     XXLARGE
 
-## Batch Publishing
-
-There is a new feature that allows markers to be saved up in an array until a trigger is recieved to send all markers to Rviz for visualization. This is useful when many markers need to be published at once that can overflow the Rviz message buffers. To enable, use ``enableBatchPublishing(true)`` and to trigger use ``triggerBatchPublish()`.
-
 ## TF Visual Tools
 
 This tool lets you easily debug Eigen transforms in Rviz. Demo use:
@@ -214,6 +219,21 @@ To run [catkin lint](https://pypi.python.org/pypi/catkin_lint), use the followin
 Use the following command with [catkin-tools](https://catkin-tools.readthedocs.org/) to run the small amount of available tests:
 
     catkin run_tests --no-deps --this -i
+
+## Docker Image
+
+[Dockerhub](https://hub.docker.com/r/davetcoleman/rviz_visual_tools/builds/) automatically creates a Docker for this repo. To run with GUI:
+
+    # This is not the safest way however, as you then compromise the access control to X server on your host
+    xhost +local:root # for the lazy and reckless
+    docker run -it --env="DISPLAY" --env="QT_X11_NO_MITSHM=1" --volume="/tmp/.X11-unix:/tmp/.X11-unix:rw" davetcoleman/rviz_visual_tools:kinetic
+    export containerId=$(docker ps -l -q)
+    # Close security hole:
+    xhost -local:root
+
+(Optional) To build the docker image locally for this repo, run in base of package:
+
+    docker build -t davetcoleman/rviz_visual_tools:kinetic .
 
 ## Contribute
 
