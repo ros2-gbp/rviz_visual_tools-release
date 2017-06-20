@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <package format="2">
   <name>rviz_visual_tools</name>
-  <version>3.4.0</version>
+  <version>3.4.1</version>
   <description>Utility functions for displaying and debugging data in Rviz via published markers</description>
 
   <maintainer email="davetcoleman@gmail.com">Dave Coleman</maintainer>
@@ -28,6 +28,11 @@
   <depend>trajectory_msgs</depend>
   <depend>roslint</depend>
   <depend>eigen_stl_containers</depend>
+
+  <!-- Something changed in ROS Lunar / Ubuntu Zesty that requires extra QT5 dependency-->
+  <!-- I suspect this depend is more than needed, but was the only dependency available -->
+  <!-- from the rosdep list that worked: https://github.com/ros/rosdistro/blob/master/rosdep/base.yaml -->
+  <depend>libqt5x11extras5-dev</depend>
 
   <test_depend>rostest</test_depend>
   <test_depend>rosunit</test_depend>
