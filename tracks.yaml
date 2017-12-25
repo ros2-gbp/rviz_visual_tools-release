@@ -69,7 +69,7 @@ tracks:
     release_tag: :{version}
     ros_distro: kinetic
     vcs_type: git
-    vcs_uri: https://github.com/davetcoleman/rviz_visual_tools.git
+    vcs_uri: https://github.com/PickNikRobotics/rviz_visual_tools.git
     version: :{auto}
   lunar:
     actions:
