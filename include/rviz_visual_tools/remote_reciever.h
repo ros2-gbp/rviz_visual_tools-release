@@ -1,7 +1,7 @@
 /*********************************************************************
  * Software License Agreement (BSD License)
  *
- *  Copyright (c) 2016, PickNik LLC
+ *  Copyright (c) 2017, PickNik Consulting
  *  All rights reserved.
  *
  *  Redistribution and use in source and binary forms, with or without
@@ -14,7 +14,7 @@
  *     copyright notice, this list of conditions and the following
  *     disclaimer in the documentation and/or other materials provided
  *     with the distribution.
- *   * Neither the name of PickNik LLC nor the names of its
+ *   * Neither the name of PickNik Consulting nor the names of its
  *     contributors may be used to endorse or promote products derived
  *     from this software without specific prior written permission.
  *
@@ -36,21 +36,17 @@
    Desc:   Object for wrapping remote control functionality
 */
 
-#ifndef RVIZ_VISUAL_TOOLS__REMOTE_RECIEVER_H
-#define RVIZ_VISUAL_TOOLS__REMOTE_RECIEVER_H
-
+#ifndef RVIZ_VISUAL_TOOLS_REMOTE_RECIEVER_H
+#define RVIZ_VISUAL_TOOLS_REMOTE_RECIEVER_H
 
 #include <sensor_msgs/Joy.h>
 #include <ros/ros.h>
 
 namespace rviz_visual_tools
 {
-
 class RemoteReciever
 {
-
 public:
-
   RemoteReciever()
   {
     joy_publisher_ = nh_.advertise<sensor_msgs::Joy>("/rviz_visual_tools_gui", 1);
@@ -95,7 +91,6 @@ public:
   }
 
 protected:
-
   // The ROS publishers
   ros::Publisher joy_publisher_;
 
@@ -105,4 +100,4 @@ protected:
 
 }  // end namespace rviz_visual_tools
 
-#endif  // RVIZ_VISUAL_TOOLS__REMOTE_RECIEVER_H
+#endif  // RVIZ_VISUAL_TOOLS_REMOTE_RECIEVER_H
