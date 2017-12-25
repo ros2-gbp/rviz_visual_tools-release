@@ -1,7 +1,7 @@
 /*********************************************************************
  * Software License Agreement (BSD License)
  *
- *  Copyright (c) 2016, PickNik LLC
+ *  Copyright (c) 2017, PickNik Consulting
  *  All rights reserved.
  *
  *  Redistribution and use in source and binary forms, with or without
@@ -14,7 +14,7 @@
  *     copyright notice, this list of conditions and the following
  *     disclaimer in the documentation and/or other materials provided
  *     with the distribution.
- *   * Neither the name of the PickNik LLC nor the names of its
+ *   * Neither the name of the PickNik Consulting nor the names of its
  *     contributors may be used to endorse or promote products derived
  *     from this software without specific prior written permission.
  *
@@ -50,7 +50,7 @@ namespace rviz_visual_tools
 /**
  * \brief Constructor
  */
-RemoteControl::RemoteControl(ros::NodeHandle nh) : nh_(nh)
+RemoteControl::RemoteControl(const ros::NodeHandle& nh) : nh_(nh)
 {
   std::string rviz_dashboard_topic = "/rviz_visual_tools_gui";
 
@@ -64,16 +64,26 @@ RemoteControl::RemoteControl(ros::NodeHandle nh) : nh_(nh)
 
 void RemoteControl::rvizDashboardCallback(const sensor_msgs::Joy::ConstPtr& msg)
 {
-  if (msg->buttons[1])
+  if (msg->buttons[1] != 0)
+  {
     setReadyForNextStep();
-  else if (msg->buttons[2])
+  }
+  else if (msg->buttons[2] != 0)
+  {
     setAutonomous();
-  else if (msg->buttons[3])
+  }
+  else if (msg->buttons[3] != 0)
+  {
     setFullAutonomous();
-  else if (msg->buttons[4])
+  }
+  else if (msg->buttons[4] != 0)
+  {
     setStop();
+  }
   else
+  {
     ROS_ERROR_STREAM_NAMED(name_, "Unknown input button");
+  }
 }
 
 bool RemoteControl::setReadyForNextStep()
@@ -129,14 +139,18 @@ bool RemoteControl::waitForNextStep(const std::string& caption)
 {
   // Check if we really need to wait
   if (!(!next_step_ready_ && !autonomous_ && ros::ok()))
+  {
     return true;
+  }
 
   // Show message
   std::cout << std::endl;
   std::cout << CONSOLE_COLOR_CYAN << "Waiting to continue: " << caption << CONSOLE_COLOR_RESET << std::flush;
 
   if (displayWaitingState_)
+  {
     displayWaitingState_(true);
+  }
 
   is_waiting_ = true;
   // Wait until next step is ready
@@ -146,14 +160,18 @@ bool RemoteControl::waitForNextStep(const std::string& caption)
     ros::spinOnce();
   }
   if (!ros::ok())
+  {
     exit(0);
+  }
 
   next_step_ready_ = false;
   is_waiting_ = false;
   std::cout << CONSOLE_COLOR_CYAN << "... continuing" << CONSOLE_COLOR_RESET << std::endl;
 
   if (displayWaitingState_)
+  {
     displayWaitingState_(false);
+  }
   return true;
 }
 
@@ -161,14 +179,18 @@ bool RemoteControl::waitForNextFullStep(const std::string& caption)
 {
   // Check if we really need to wait
   if (!(!next_step_ready_ && !full_autonomous_ && ros::ok()))
+  {
     return true;
+  }
 
   // Show message
   std::cout << std::endl;
   std::cout << CONSOLE_COLOR_CYAN << "Waiting to continue: " << caption << CONSOLE_COLOR_RESET << std::flush;
 
   if (displayWaitingState_)
+  {
     displayWaitingState_(true);
+  }
 
   is_waiting_ = true;
   // Wait until next step is ready
@@ -178,14 +200,18 @@ bool RemoteControl::waitForNextFullStep(const std::string& caption)
     ros::spinOnce();
   }
   if (!ros::ok())
+  {
     exit(0);
+  }
 
   next_step_ready_ = false;
   is_waiting_ = false;
   std::cout << CONSOLE_COLOR_CYAN << "... continuing" << CONSOLE_COLOR_RESET << std::endl;
 
   if (displayWaitingState_)
+  {
     displayWaitingState_(false);
+  }
   return true;
 }
 
