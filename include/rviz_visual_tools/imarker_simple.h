@@ -14,7 +14,7 @@
  *     copyright notice, this list of conditions and the following
  *     disclaimer in the documentation and/or other materials provided
  *     with the distribution.
- *   * Neither the name of the Univ of CO, Boulder nor the names of its
+ *   * Neither the name of PickNik Consulting nor the names of its
  *     contributors may be used to endorse or promote products derived
  *     from this software without specific prior written permission.
  *
@@ -32,75 +32,75 @@
  *  POSSIBILITY OF SUCH DAMAGE.
  *********************************************************************/
 
-/* Author: Dave Coleman <dave@dav.ee>
-   Desc:   Helps debug and visualize transforms via the TF infrastructure
-   Note:   We shouldn't have to publish the transforms at interval since they are static, but we do
-   because of https://github.com/ros/geometry_experimental/issues/108
+/* Author: Dave Coleman
+   Desc:   Use interactive markers in a C++ class
 */
 
-#ifndef RVIZ_VISUAL_TOOLS_TF_VISUAL_TOOLS_H
-#define RVIZ_VISUAL_TOOLS_TF_VISUAL_TOOLS_H
-
-// C++
-#include <vector>
-#include <string>
+#ifndef RVIZ_VISUAL_TOOLS_IMARKER_SIMPLE_H
+#define RVIZ_VISUAL_TOOLS_IMARKER_SIMPLE_H
 
 // ROS
 #include <ros/ros.h>
-#include <geometry_msgs/TransformStamped.h>
 
-// Eigen
+#include <geometry_msgs/PoseStamped.h>
+
+#include <interactive_markers/interactive_marker_server.h>
+#include <visualization_msgs/InteractiveMarkerFeedback.h>
+#include <visualization_msgs/InteractiveMarker.h>
+#include <interactive_markers/menu_handler.h>
 #include <Eigen/Geometry>
 
-#include <tf2_ros/transform_broadcaster.h>
-
-// namespace tf2_ros
-// {
-// class StaticTransformBroadcaster;
-// };
+// C++
+#include <string>
 
 namespace rviz_visual_tools
 {
-class TFVisualTools
+using visualization_msgs::InteractiveMarkerFeedback;
+using visualization_msgs::InteractiveMarkerControl;
+
+typedef std::function<void(const visualization_msgs::InteractiveMarkerFeedbackConstPtr&, const Eigen::Affine3d&)>
+    IMarkerCallback;
+
+class IMarkerSimple
 {
 public:
-  /**
-   * \brief Constructor
-   * \param loop_hz - how often tf is published
-   */
-  explicit TFVisualTools(double loop_hz = 2);
+  /** \brief Constructor */
+  explicit IMarkerSimple(const std::string& name = "imarker", double scale = 0.2);
 
-  /**
-   * \brief Visualize transforms in Rviz, etc
-   * \return true on success
-   */
-  bool publishTransform(const Eigen::Affine3d& transform, const std::string& from_frame, const std::string& to_frame);
+  geometry_msgs::Pose& getPose();
 
-  /**
-   * \brief At a certain frequency update the tf transforms that we are tracking
-   *        This is called internally by a clock, you should not need to use this
-   *        TODO: make private in next release?
-   */
-  void publishAllTransforms(const ros::TimerEvent& e);
+  void setPose(const Eigen::Affine3d& pose);
+
+  void setPose(const geometry_msgs::Pose& pose);
+
+  void iMarkerCallback(const visualization_msgs::InteractiveMarkerFeedbackConstPtr& feedback);
+
+  void sendUpdatedIMarkerPose();
+
+  void make6DofMarker(const geometry_msgs::Pose& pose, double scale = 0.2);
 
 private:
+  // --------------------------------------------------------
+
+  // The short name of this class
+  std::string name_ = "imarker_simple";
+
   // A shared node handle
   ros::NodeHandle nh_;
 
-  // Send tf messages
-  tf2_ros::TransformBroadcaster tf_pub_;
+  geometry_msgs::Pose latest_pose_;
 
-  // Separate thread to publish transforms
-  ros::Timer non_realtime_loop_;
+  // Interactive markers
+  std::shared_ptr<interactive_markers::InteractiveMarkerServer> imarker_server_;
 
-  // Collect the transfroms
-  std::vector<geometry_msgs::TransformStamped> transforms_;
+  // Interactive markers
+  // interactive_markers::MenuHandler menu_handler_;
+  visualization_msgs::InteractiveMarker int_marker_;
 };  // end class
 
-// Create boost pointers for this class
-typedef boost::shared_ptr<TFVisualTools> TFVisualToolsPtr;
-typedef boost::shared_ptr<const TFVisualTools> TFVisualToolsConstPtr;
+// Create std pointers for this class
+typedef std::shared_ptr<IMarkerSimple> IMarkerSimplePtr;
+typedef std::shared_ptr<const IMarkerSimple> IMarkerSimpleConstPtr;
 
 }  // namespace rviz_visual_tools
-
-#endif  // RVIZ_VISUAL_TOOLS_TF_VISUAL_TOOLS_H
+#endif  // RVIZ_VISUAL_TOOLS_IMARKER_SIMPLE_H

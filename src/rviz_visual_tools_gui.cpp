@@ -1,7 +1,7 @@
 /*********************************************************************
  * Software License Agreement (BSD License)
  *
- *  Copyright (c) 2015, PickNik LLC
+ *  Copyright (c) 2017, PickNik Consulting
  *  All rights reserved.
  *
  *  Redistribution and use in source and binary forms, with or without
@@ -14,7 +14,7 @@
  *     copyright notice, this list of conditions and the following
  *     disclaimer in the documentation and/or other materials provided
  *     with the distribution.
- *   * Neither the name of PickNik LLC nor the names of its
+ *   * Neither the name of PickNik Consulting nor the names of its
  *     contributors may be used to endorse or promote products derived
  *     from this software without specific prior written permission.
  *
@@ -36,16 +36,16 @@
    Desc:   Rviz display panel for controlling and debugging ROS applications
 */
 
-#include <stdio.h>
+#include <cstdio>
 
-#include <QPainter>
-#include <QLineEdit>
-#include <QVBoxLayout>
+#include <QGroupBox>
 #include <QHBoxLayout>
 #include <QLabel>
-#include <QTimer>
-#include <QGroupBox>
+#include <QLineEdit>
+#include <QPainter>
 #include <QSpinBox>
+#include <QTimer>
+#include <QVBoxLayout>
 
 #include "rviz_visual_tools_gui.h"
 
@@ -74,14 +74,14 @@ RvizVisualToolsGui::RvizVisualToolsGui(QWidget* parent) : rviz::Panel(parent)
   connect(btn_stop_, SIGNAL(clicked()), this, SLOT(moveStop()));
 
   // Horizontal Layout
-  QHBoxLayout* hlayout1 = new QHBoxLayout;
+  auto* hlayout1 = new QHBoxLayout;
   hlayout1->addWidget(btn_next_);
   hlayout1->addWidget(btn_auto_);
   hlayout1->addWidget(btn_full_auto_);
   hlayout1->addWidget(btn_stop_);
 
   // Verticle layout
-  QVBoxLayout* layout = new QVBoxLayout;
+  auto* layout = new QVBoxLayout;
   layout->addLayout(hlayout1);
   setLayout(layout);
 

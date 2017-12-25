@@ -1,7 +1,7 @@
 /*********************************************************************
  * Software License Agreement (BSD License)
  *
- *  Copyright (c) 2015, PickNik LLC
+ *  Copyright (c) 2017, PickNik Consulting
  *  All rights reserved.
  *
  *  Redistribution and use in source and binary forms, with or without
@@ -14,7 +14,7 @@
  *     copyright notice, this list of conditions and the following
  *     disclaimer in the documentation and/or other materials provided
  *     with the distribution.
- *   * Neither the name of PickNik LLC nor the names of its
+ *   * Neither the name of PickNik Consulting nor the names of its
  *     contributors may be used to endorse or promote products derived
  *     from this software without specific prior written permission.
  *
@@ -36,7 +36,7 @@
    Desc:   Rviz display panel for controlling and debugging ROS applications
 */
 
-// TODO: convert to flow layout:
+// TODO(dave): convert to flow layout:
 // http://doc.qt.io/qt-5/qtwidgets-layouts-flowlayout-example.html
 
 #ifndef RVIZ_VISUAL_TOOLS__RVIZ_VISUAL_TOOLS_GUI_H
@@ -58,15 +58,13 @@ class QSpinBox;
 
 namespace rviz_visual_tools
 {
-
 class RvizVisualToolsGui : public rviz::Panel
 {
   Q_OBJECT
 public:
+  explicit RvizVisualToolsGui(QWidget* parent = 0);
 
-  RvizVisualToolsGui(QWidget *parent = 0);
-
-  virtual void load(const rviz::Config &config);
+  virtual void load(const rviz::Config& config);
   virtual void save(rviz::Config config) const;
 
 public Q_SLOTS:
@@ -82,10 +80,10 @@ protected Q_SLOTS:
   void moveStop();
 
 protected:
-  QPushButton *btn_next_;
-  QPushButton *btn_auto_;
-  QPushButton *btn_full_auto_;
-  QPushButton *btn_stop_;
+  QPushButton* btn_next_;
+  QPushButton* btn_auto_;
+  QPushButton* btn_full_auto_;
+  QPushButton* btn_stop_;
 
   RemoteReciever remote_reciever_;
 };
