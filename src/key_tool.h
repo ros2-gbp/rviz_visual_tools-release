@@ -43,7 +43,6 @@
 
 namespace rviz_visual_tools
 {
-
 class KeyTool : public rviz::Tool
 {
   Q_OBJECT
@@ -65,6 +64,6 @@ protected:
   rviz::MoveTool move_tool_;
   RemoteReciever remote_reciever_;
 };
-}
+} // namespace rviz_visual_tools
 
 #endif
