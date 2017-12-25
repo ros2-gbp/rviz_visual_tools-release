@@ -1,3 +1,26 @@
+## rviz_visual_tools (kinetic) - 3.5.1-0
+
+The packages in the `rviz_visual_tools` repository were released into the `kinetic` distro by running `/usr/bin/bloom-release rviz_visual_tools -t kinetic -r kinetic --edit` on `Mon, 25 Dec 2017 19:43:40 -0000`
+
+The `rviz_visual_tools` package was released.
+
+Version of package(s) in repository `rviz_visual_tools`:
+
+- upstream repository: https://github.com/PickNikRobotics/rviz_visual_tools.git
+- release repository: https://github.com/davetcoleman/rviz_visual_tools-release.git
+- rosdistro version: `3.4.1-0`
+- old version: `3.4.0-0`
+- new version: `3.5.1-0`
+
+Versions of tools used:
+
+- bloom version: `0.6.1`
+- catkin_pkg version: `0.3.9`
+- rosdep version: `0.11.8`
+- rosdistro version: `0.6.2`
+- vcstools version: `0.1.39`
+
+
 ## rviz_visual_tools (lunar) - 3.4.1-0
 
 The packages in the `rviz_visual_tools` repository were released into the `lunar` distro by running `/usr/bin/bloom-release rviz_visual_tools -t lunar -r lunar` on `Tue, 20 Jun 2017 11:10:47 -0000`
