@@ -1,7 +1,7 @@
 /*********************************************************************
  * Software License Agreement (BSD License)
  *
- *  Copyright (c) 2015, University of Colorado, Boulder
+ *  Copyright (c) 2017, PickNik Consulting
  *  All rights reserved.
  *
  *  Redistribution and use in source and binary forms, with or without
@@ -46,9 +46,8 @@
 
 namespace rviz_visual_tools
 {
-TFVisualTools::TFVisualTools()
+TFVisualTools::TFVisualTools(double loop_hz)
 {
-  double loop_hz = 2;  // hz
   ros::Duration update_freq = ros::Duration(1.0 / loop_hz);
   non_realtime_loop_ = nh_.createTimer(update_freq, &TFVisualTools::publishAllTransforms, this);
 
@@ -64,16 +63,30 @@ bool TFVisualTools::publishTransform(const Eigen::Affine3d& transform, const std
   geometry_msgs::TransformStamped tf2_msg;
   tf2_msg.header.stamp = ros::Time::now();
   tf::transformEigenToMsg(transform, tf2_msg.transform);
+
+  // Prevent TF_DENORMALIZED_QUATERNION errors in TF2 from happening.
+  double quatNorm;
+
+  // Normalizing the Quaternion
+  quatNorm = 1 / sqrt(tf2_msg.transform.rotation.x * tf2_msg.transform.rotation.x +
+                      tf2_msg.transform.rotation.y * tf2_msg.transform.rotation.y +
+                      tf2_msg.transform.rotation.z * tf2_msg.transform.rotation.z +
+                      tf2_msg.transform.rotation.w * tf2_msg.transform.rotation.w);
+  tf2_msg.transform.rotation.x *= quatNorm;
+  tf2_msg.transform.rotation.y *= quatNorm;
+  tf2_msg.transform.rotation.z *= quatNorm;
+  tf2_msg.transform.rotation.w *= quatNorm;
+
   tf2_msg.header.frame_id = from_frame;
   tf2_msg.child_frame_id = to_frame;
 
   // Check if this transform has already been added
-  for (std::size_t i = 0; i < transforms_.size(); ++i)
+  for (auto& transform : transforms_)
   {
-    if (transforms_[i].child_frame_id == to_frame && transforms_[i].header.frame_id == from_frame)
+    if (transform.child_frame_id == to_frame && transform.header.frame_id == from_frame)
     {
       // ROS_WARN_STREAM_NAMED("tf_visual_tools", "This transform has already been added, updating");
-      transforms_[i].transform = tf2_msg.transform;
+      transform.transform = tf2_msg.transform;
       return true;
     }
   }
@@ -83,14 +96,14 @@ bool TFVisualTools::publishTransform(const Eigen::Affine3d& transform, const std
   return true;
 }
 
-void TFVisualTools::publishAllTransforms(const ros::TimerEvent& e)
+void TFVisualTools::publishAllTransforms(const ros::TimerEvent& /*e*/)
 {
   ROS_DEBUG_STREAM_NAMED("tf_visual_tools", "Publishing transforms");
 
   // Update timestamps
-  for (std::size_t i = 0; i < transforms_.size(); ++i)
+  for (auto& transform : transforms_)
   {
-    transforms_[i].header.stamp = ros::Time::now();
+    transform.header.stamp = ros::Time::now();
   }
   // Publish
   tf_pub_.sendTransform(transforms_);

@@ -1,7 +1,5 @@
 # Rviz Visual Tools
 
-**Note: a recent change (Sept 28, 2016) requires that all publishing must now be triggered by ``trigger()``**
-
 C++ API wrapper for displaying shapes and meshes in Rviz via helper functions that publish markers. Useful for displaying and debugging data. For more advanced robot visualization features, see the [moveit_visual_tools](https://github.com/davetcoleman/moveit_visual_tools) which builds on this class.
 
 This package includes:
@@ -18,6 +16,8 @@ This package includes:
  - A tf publishing helper class
 
 Developed by [Dave Coleman](http://dav.ee) at the Correll Robotics Lab, University of Colorado Boulder with help from Andy McEvoy and many others.
+
+<a href='https://ko-fi.com/A7182AMW' target='_blank'><img height='36' style='border:0px;height:36px;' src='https://az743702.vo.msecnd.net/cdn/kofi2.png?v=0' border='0' alt='Buy Me a Coffee at ko-fi.com' /></a>
 
  * [![Build Status](https://travis-ci.org/davetcoleman/rviz_visual_tools.svg)](https://travis-ci.org/davetcoleman/rviz_visual_tools) Travis CI
  * [![Build Status](http://build.ros.org/buildStatus/icon?job=Kbin_uX64__rviz_visual_tools__ubuntu_xenial_amd64__binary)](http://build.ros.org/view/Kbin_uX64/job/Kbin_uX64__rviz_visual_tools__ubuntu_xenial_amd64__binary/) ROS Buildfarm - AMD64 Xenial Debian Build
@@ -194,6 +194,12 @@ Convenience functions
  - getCenterPoint
  - getVectorBetweenPoints
 
+Frame locking
+
+![](resources/frame_locking.gif)
+
+This allows the markers to be automatically updated as the base frame moves without having to republish. You can enable it via ``enableFrameLocking()`` (this is not enabled by default).
+
 ### Available Colors
 
 This package helps you quickly choose colors - feel free to send PRs with more colors as needed
@@ -257,6 +263,10 @@ To run [catkin lint](https://pypi.python.org/pypi/catkin_lint), use the followin
 Use the following command with [catkin-tools](https://catkin-tools.readthedocs.org/) to run the small amount of available tests:
 
     catkin run_tests --no-deps --this -i
+
+Run with clang-tidy:
+
+    run-clang-tidy-4.0.py -clang-tidy-binary=/usr/lib/llvm-4.0/bin/clang-tidy -fix -p=/home/dave/ros/current/ws_moveit/build/rviz_visual_tools .
 
 ## Docker Image
 
