@@ -20,9 +20,12 @@ Developed by [Dave Coleman](http://dav.ee) at the Correll Robotics Lab, Universi
 
 <a href='https://ko-fi.com/A7182AMW' target='_blank'><img height='36' style='border:0px;height:36px;' src='https://az743702.vo.msecnd.net/cdn/kofi2.png?v=0' border='0' alt='Buy Me a Coffee at ko-fi.com' /></a>
 
- * [![Build Status](https://travis-ci.org/davetcoleman/rviz_visual_tools.svg)](https://travis-ci.org/davetcoleman/rviz_visual_tools) Travis CI
- * [![Build Status](http://build.ros.org/buildStatus/icon?job=Kbin_uX64__rviz_visual_tools__ubuntu_xenial_amd64__binary)](http://build.ros.org/view/Kbin_uX64/job/Kbin_uX64__rviz_visual_tools__ubuntu_xenial_amd64__binary/) ROS Buildfarm - AMD64 Xenial Debian Build
- * [![Build Status](http://build.ros.org/buildStatus/icon?job=Kdev__rviz_visual_tools__ubuntu_xenial_amd64)](http://build.ros.org/view/Kdev/job/Kdev__rviz_visual_tools__ubuntu_xenial_amd64/) ROS Buildfarm - AMD64 Xenial Devel Build
+ * [![Build Status](https://travis-ci.org/PickNikRobotics/rviz_visual_tools.svg)](https://travis-ci.org/PickNikRobotics/rviz_visual_tools) Travis CI
+ * [![Build Status](http://build.ros.org/buildStatus/icon?job=Kbin_uX64__rviz_visual_tools__ubuntu_xenial_amd64__binary)](http://build.ros.org/view/Kbin_uX64/job/Kbin_uX64__rviz_visual_tools__ubuntu_xenial_amd64__binary/) ROS Kinetic Buildfarm - AMD64 Xenial Debian Build for Ubuntu 16.04
+ * [![Build Status](http://build.ros.org/buildStatus/icon?job=Kdev__rviz_visual_tools__ubuntu_xenial_amd64)](http://build.ros.org/view/Kdev/job/Kdev__rviz_visual_tools__ubuntu_xenial_amd64/) ROS Kinetic Buildfarm - AMD64 Xenial Devel Build for Ubuntu 16.04
+ * [![Build Status](http://build.ros.org/buildStatus/icon?job=Msrc_uB__rviz_visual_tools__ubuntu_bionic__source)](http://build.ros.org/job/Msrc_uB__rviz_visual_tools__ubuntu_bionic__source/) ROS Melodic Buildfarm - AMD64 Bionic Debian Build for Ubuntu 18.04
+ * [![Build Status](http://build.ros.org/buildStatus/icon?job=Mdev__rviz_visual_tools__ubuntu_bionic_amd64)](http://build.ros.org/job/Mdev__rviz_visual_tools__ubuntu_bionic_amd64/) ROS Melodic Buildfarm - AMD64 Bionic Devel Build for Ubuntu 18.04
+
 
 ![](resources/screenshot.png)
 
@@ -31,14 +34,14 @@ Developed by [Dave Coleman](http://dav.ee) at the Correll Robotics Lab, Universi
 ### Ubuntu Debian
 
 ```
-sudo apt-get install ros-kinetic-rviz-visual-tools
+sudo apt-get install ros-melodic-rviz-visual-tools
 ```
 
 ### Build from Source
 
 Clone this repository into a catkin workspace, then use the rosdep install tool to automatically download its dependencies. Depending on your current version of ROS, use:
 ```
-rosdep install --from-paths src --ignore-src --rosdistro kinetic
+rosdep install --from-paths src --ignore-src --rosdistro melodic
 ```
 
 ## Quick Start Demo
@@ -53,7 +56,7 @@ Then start demo:
 
 ## Code API
 
-See [the Doxygen documentation](http://docs.ros.org/kinetic/api/rviz_visual_tools/html/annotated.html)
+See [the Doxygen documentation](http://docs.ros.org/melodic/api/rviz_visual_tools/html/annotated.html)
 
 ## Usage
 
@@ -90,7 +93,7 @@ Start rviz and create a new marker using the 'Add' button at the bottom right. C
 In the following snippet we create a pose at xyz (0.1, 0.1, 0.1) and rotate the pose down 45 degrees along the Y axis. Then we publish the pose as a arrow for visualziation in Rviz. Make sure your Rviz fixed frame is the same as the one chosen in the code.
 
     // Create pose
-    Eigen::Affine3d pose;
+    Eigen::Isometry3d pose;
     pose = Eigen::AngleAxisd(M_PI/4, Eigen::Vector3d::UnitY()); // rotate along X axis by 45 degrees
     pose.translation() = Eigen::Vector3d( 0.1, 0.1, 0.1 ); // translate x,y,z
 
@@ -100,6 +103,8 @@ In the following snippet we create a pose at xyz (0.1, 0.1, 0.1) and rotate the 
 
     // Don't forget to trigger the publisher!
     visual_tools_->trigger();
+    
+For more example code see [rviz_visual_tools_demo.cpp](https://github.com/PickNikRobotics/rviz_visual_tools/blob/melodic-devel/src/rviz_visual_tools_demo.cpp)
 
 ## Rviz GUI Usage
 
@@ -158,7 +163,6 @@ See ``rviz_visual_tools.h`` for more details and documentation on the following 
  - publishAxisLabeled
  - publishCylinder
  - publishMesh
- - publishMesh
  - publishText
  - publishTest
 
@@ -206,7 +210,7 @@ This allows the markers to be automatically updated as the base frame moves with
 This package helps you quickly choose colors - feel free to send PRs with more colors as needed
 
     BLACK,
-	BLUE,
+    BLUE,
     BROWN,
     CYAN,
     DARK_GREY,
@@ -224,7 +228,7 @@ This package helps you quickly choose colors - feel free to send PRs with more c
     TRANSLUCENT,
     TRANSLUCENT_DARK,
     RAND,
-	CLEAR,
+    CLEAR,
     DEFAULT // i.e. 'do not change default color'
 
 ### Available Marker Sizes
@@ -253,7 +257,7 @@ This class quickly gives you basic 6dof pose interactive marker funcitonality. A
 This tool lets you easily debug Eigen transforms in Rviz. Demo use:
 
     rviz_visual_tools::TFVisualTools tf_visualizer;
-    Eigen::Affine3d world_to_shelf_transform = Eigen::Affine3d::Identity(); // or whatever value
+    Eigen::Isometry3d world_to_shelf_transform = Eigen::Isometry3d::Identity(); // or whatever value
     tf_visualizer.publishTransform(world_to_shelf_transform, "world", "shelf");
 
 *Note: this is a work in progress*
@@ -282,14 +286,14 @@ Run with clang-tidy:
 
     # This is not the safest way however, as you then compromise the access control to X server on your host
     xhost +local:root # for the lazy and reckless
-    docker run -it --env="DISPLAY" --env="QT_X11_NO_MITSHM=1" --volume="/tmp/.X11-unix:/tmp/.X11-unix:rw" davetcoleman/rviz_visual_tools:kinetic
+    docker run -it --env="DISPLAY" --env="QT_X11_NO_MITSHM=1" --volume="/tmp/.X11-unix:/tmp/.X11-unix:rw" davetcoleman/rviz_visual_tools:melodic
     export containerId=$(docker ps -l -q)
     # Close security hole:
     xhost -local:root
 
 (Optional) To build the docker image locally for this repo, run in base of package:
 
-    docker build -t davetcoleman/rviz_visual_tools:kinetic .
+    docker build -t davetcoleman/rviz_visual_tools:melodic .
 
 ## Contribute
 
