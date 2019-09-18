@@ -32,7 +32,7 @@
  *  POSSIBILITY OF SUCH DAMAGE.
  *********************************************************************/
 
-/* Author: Dave Coleman <dave@dav.ee>, Andy McEvoy
+/* Author: Dave Coleman <dave@picknik.ai>, Andy McEvoy
    Desc:   Helper functions for displaying basic shape markers in Rviz
 */
 
@@ -67,6 +67,18 @@
 // rviz_visual_tools
 #include <rviz_visual_tools/deprecation.h>
 #include <rviz_visual_tools/remote_control.h>
+
+// Import/export for windows dll's and visibility for gcc shared libraries.
+
+#ifdef ROS_BUILD_SHARED_LIBS // ros is being built around shared libraries
+  #ifdef rviz_visual_tools_EXPORTS // we are building a shared lib/dll
+    #define RVIZ_VISUAL_TOOLS_DECL ROS_HELPER_EXPORT
+  #else // we are using shared lib/dll
+    #define RVIZ_VISUAL_TOOLS_DECL ROS_HELPER_IMPORT
+  #endif
+#else // ros is being built around static libraries
+  #define RVIZ_VISUAL_TOOLS_DECL
+#endif
 
 namespace rviz_visual_tools
 {
@@ -637,11 +649,11 @@ a   *        Warning: when using this in a loop be sure to call trigger() at end
    */
   bool publishPath(const std::vector<geometry_msgs::Pose>& path, colors color = RED, scales scale = MEDIUM,
                    const std::string& ns = "Path");
-  bool publishPath(const std::vector<geometry_msgs::Point>& path, colors color = RED, scales scale = MEDIUM,
+  bool publishPath(const std::vector<geometry_msgs::Point>& path, colors color, scales scale,
                    const std::string& ns = "Path");
-  bool publishPath(const EigenSTL::vector_Isometry3d& path, colors color = RED, scales scale = MEDIUM,
+  bool publishPath(const EigenSTL::vector_Isometry3d& path, colors color, scales scale,
                    const std::string& ns = "Path");
-  bool publishPath(const EigenSTL::vector_Vector3d& path, colors color = RED, scales scale = MEDIUM,
+  bool publishPath(const EigenSTL::vector_Vector3d& path, colors color, scales scale,
                    const std::string& ns = "Path");
   bool publishPath(const std::vector<geometry_msgs::Point>& path, colors color = RED, double radius = 0.01,
                    const std::string& ns = "Path");
@@ -1046,7 +1058,7 @@ protected:
   ros::NodeHandle nh_;
 
   // Short name for this class
-  static const std::string name_;
+  static RVIZ_VISUAL_TOOLS_DECL const std::string name_;
 
   // Optional remote control
   RemoteControlPtr remote_control_;
