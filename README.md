@@ -1,3 +1,26 @@
+## rviz_visual_tools (melodic) - 3.8.0-4
+
+The packages in the `rviz_visual_tools` repository were released into the `melodic` distro by running `/usr/bin/bloom-release rviz_visual_tools -t melodic -r melodic` on `Wed, 18 Sep 2019 17:29:52 -0000`
+
+The `rviz_visual_tools` package was released.
+
+Version of package(s) in repository `rviz_visual_tools`:
+
+- upstream repository: https://github.com/PickNikRobotics/rviz_visual_tools.git
+- release repository: https://github.com/PickNikRobotics/rviz_visual_tools-release.git
+- rosdistro version: `3.7.0-0`
+- old version: `3.8.0-3`
+- new version: `3.8.0-4`
+
+Versions of tools used:
+
+- bloom version: `0.8.0`
+- catkin_pkg version: `0.4.13`
+- rosdep version: `0.15.2`
+- rosdistro version: `0.7.4`
+- vcstools version: `0.1.42`
+
+
 ## rviz_visual_tools (melodic) - 3.8.0-3
 
 The packages in the `rviz_visual_tools` repository were released into the `melodic` distro by running `/usr/bin/bloom-release rviz_visual_tools -t melodic -r melodic` on `Wed, 18 Sep 2019 17:26:24 -0000`
