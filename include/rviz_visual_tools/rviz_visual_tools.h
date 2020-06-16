@@ -36,8 +36,7 @@
    Desc:   Helper functions for displaying basic shape markers in Rviz
 */
 
-#ifndef RVIZ_VISUAL_TOOLS_RVIZ_VISUAL_TOOLS_H
-#define RVIZ_VISUAL_TOOLS_RVIZ_VISUAL_TOOLS_H
+#pragma once
 
 #include <ros/ros.h>
 
@@ -57,6 +56,7 @@
 #include <boost/shared_ptr.hpp>
 
 // Messages
+#include <shape_msgs/Mesh.h>
 #include <std_msgs/ColorRGBA.h>
 #include <graph_msgs/GeometryGraph.h>
 #include <geometry_msgs/PoseArray.h>
@@ -70,14 +70,14 @@
 
 // Import/export for windows dll's and visibility for gcc shared libraries.
 
-#ifdef ROS_BUILD_SHARED_LIBS // ros is being built around shared libraries
-  #ifdef rviz_visual_tools_EXPORTS // we are building a shared lib/dll
-    #define RVIZ_VISUAL_TOOLS_DECL ROS_HELPER_EXPORT
-  #else // we are using shared lib/dll
-    #define RVIZ_VISUAL_TOOLS_DECL ROS_HELPER_IMPORT
-  #endif
-#else // ros is being built around static libraries
-  #define RVIZ_VISUAL_TOOLS_DECL
+#ifdef ROS_BUILD_SHARED_LIBS      // ros is being built around shared libraries
+#ifdef rviz_visual_tools_EXPORTS  // we are building a shared lib/dll
+#define RVIZ_VISUAL_TOOLS_DECL ROS_HELPER_EXPORT
+#else  // we are using shared lib/dll
+#define RVIZ_VISUAL_TOOLS_DECL ROS_HELPER_IMPORT
+#endif
+#else  // ros is being built around static libraries
+#define RVIZ_VISUAL_TOOLS_DECL
 #endif
 
 namespace rviz_visual_tools
@@ -196,7 +196,8 @@ public:
    * \param marker_topic - rostopic to publish markers to - your Rviz display should match
    * \param nh - optional ros node handle - defaults to "~"
    */
-  explicit RvizVisualTools(std::string base_frame, std::string marker_topic = RVIZ_MARKER_TOPIC, ros::NodeHandle nh = ros::NodeHandle("~"));
+  explicit RvizVisualTools(std::string base_frame, std::string marker_topic = RVIZ_MARKER_TOPIC,
+                           ros::NodeHandle nh = ros::NodeHandle("~"));
   /**
    * \brief Deconstructor
    */
@@ -381,9 +382,9 @@ public:
   void enableFrameLocking(bool enable = true);
 
   /**
-   * \brief Trigger the publish function to send out all collected markers IF there are at leats
+   * \brief Trigger the publish function to send out all collected markers IF there are at least
    *        queueSize number of markers ready to be published.
-a   *        Warning: when using this in a loop be sure to call trigger() at end of loop
+   *        Warning: when using this in a loop be sure to call trigger() at end of loop
    *        in case there are any remainder markers in the queue
    * \return true on success
    */
@@ -411,6 +412,22 @@ a   *        Warning: when using this in a loop be sure to call trigger() at end
    */
   bool publishCone(const Eigen::Isometry3d& pose, double angle, colors color = TRANSLUCENT, double scale = 1.0);
   bool publishCone(const geometry_msgs::Pose& pose, double angle, colors color = TRANSLUCENT, double scale = 1.0);
+
+  /**
+   * \brief Display a plane. Vector (A, B, C) gives the normal to the plane.
+   *        |D|/|(A,B,C)| gives the distance to plane along that unit normal.
+   *        The plane equation used is Ax+By+Cz+D=0.
+   * \param A - coefficient from Ax+By+Cz+D=0
+   * \param B - coefficient from Ax+By+Cz+D=0
+   * \param C - coefficient from Ax+By+Cz+D=0
+   * \param D - coefficient from Ax+By+Cz+D=0
+   * \param color - the color of the plane
+   * \param x_width - X-size of the vizualized plane [meters]
+   * \param y_width - Y-size of the visualized plane [meters]
+   * \return true on success
+   */
+  bool publishABCDPlane(const double A, const double B, const double C, const double D, colors color = TRANSLUCENT,
+                        double x_width = 1.0, double y_width = 1.0);
 
   /**
    * \brief Display the XY plane of a given pose
@@ -468,8 +485,8 @@ a   *        Warning: when using this in a loop be sure to call trigger() at end
                      const std::string& ns = "Sphere", std::size_t id = 0);
   bool publishSphere(const geometry_msgs::Pose& pose, const std_msgs::ColorRGBA& color,
                      const geometry_msgs::Vector3 scale, const std::string& ns = "Sphere", std::size_t id = 0);
-  bool publishSphere(const Eigen::Isometry3d& pose, const std_msgs::ColorRGBA& color, const geometry_msgs::Vector3 scale,
-                     const std::string& ns = "Sphere", std::size_t id = 0);
+  bool publishSphere(const Eigen::Isometry3d& pose, const std_msgs::ColorRGBA& color,
+                     const geometry_msgs::Vector3 scale, const std::string& ns = "Sphere", std::size_t id = 0);
   bool publishSphere(const Eigen::Vector3d& point, const std_msgs::ColorRGBA& color, const geometry_msgs::Vector3 scale,
                      const std::string& ns = "Sphere", std::size_t id = 0);
   bool publishSphere(const geometry_msgs::PoseStamped& pose, colors color, const geometry_msgs::Vector3 scale,
@@ -592,6 +609,16 @@ a   *        Warning: when using this in a loop be sure to call trigger() at end
   bool publishCuboid(const Eigen::Isometry3d& pose, double depth, double width, double height, colors color = BLUE);
 
   /**
+   * \brief Display a rectangular cuboid
+   * \param pose - pose of the box
+   * \param size - (x, y, z) of the box
+   * \param color - an enum pre-defined name of a color
+   * \return true on success
+   */
+  bool publishCuboid(const Eigen::Isometry3d& pose, const Eigen::Vector3d& size, colors color = BLUE);
+  bool publishCuboid(const geometry_msgs::Pose& pose, const geometry_msgs::Vector3& size, colors color = BLUE);
+
+  /**
    * \brief Display a marker of line
    * \param point1 - x,y,z of start of line
    * \param point2 - x,y,z of end of line
@@ -651,10 +678,8 @@ a   *        Warning: when using this in a loop be sure to call trigger() at end
                    const std::string& ns = "Path");
   bool publishPath(const std::vector<geometry_msgs::Point>& path, colors color, scales scale,
                    const std::string& ns = "Path");
-  bool publishPath(const EigenSTL::vector_Isometry3d& path, colors color, scales scale,
-                   const std::string& ns = "Path");
-  bool publishPath(const EigenSTL::vector_Vector3d& path, colors color, scales scale,
-                   const std::string& ns = "Path");
+  bool publishPath(const EigenSTL::vector_Isometry3d& path, colors color, scales scale, const std::string& ns = "Path");
+  bool publishPath(const EigenSTL::vector_Vector3d& path, colors color, scales scale, const std::string& ns = "Path");
   bool publishPath(const std::vector<geometry_msgs::Point>& path, colors color = RED, double radius = 0.01,
                    const std::string& ns = "Path");
   bool publishPath(const EigenSTL::vector_Vector3d& path, colors color = RED, double radius = 0.01,
@@ -832,6 +857,22 @@ public:
                    double scale = 1, const std::string& ns = "mesh", std::size_t id = 0);
 
   /**
+   * \brief Display a mesh from triangles and vertices
+   * \param pose - the location to publish the marker with respect to the base frame
+   * \param mesh - shape_msgs::Mesh contains the triangles and vertices
+   * \param color - an enum pre-defined name of a color
+   * \param scale - an enum pre-defined name of a size
+   * \param ns - namespace of marker
+   * \param id - unique counter of mesh that allows you to overwrite a previous mesh. if 0, defaults
+   * to incremental counter
+   * \return true on success
+   */
+  bool publishMesh(const Eigen::Isometry3d& pose, const shape_msgs::Mesh& mesh, colors color = CLEAR, double scale = 1,
+                   const std::string& ns = "mesh", std::size_t id = 0);
+  bool publishMesh(const geometry_msgs::Pose& pose, const shape_msgs::Mesh& mesh, colors color = CLEAR,
+                   double scale = 1, const std::string& ns = "mesh", std::size_t id = 0);
+
+  /**
    * \brief Display a graph
    * \param graph of nodes and edges
    * \param color - an enum pre-defined name of a color
@@ -960,9 +1001,9 @@ public:
   @param convention - default is rviz_visual_tools::XYZ
   */
   static Eigen::Isometry3d convertFromXYZRPY(double tx, double ty, double tz, double rx, double ry, double rz,
-                                           EulerConvention convention);  // ZYX is ROS standard
+                                             EulerConvention convention);  // ZYX is ROS standard
   static Eigen::Isometry3d convertFromXYZRPY(const std::vector<double>& transform6,
-                                           EulerConvention convention);  // ZYX is ROS standard
+                                             EulerConvention convention);  // ZYX is ROS standard
 
   // TODO(davetcoleman): add opposite conversion that uses   Eigen::Vector3d rpy = pose.rotation().eulerAngles(0, 1, 2);
 
@@ -973,8 +1014,8 @@ public:
    * \param output vector of size 6 in order xyz rpy
    */
   static void convertToXYZRPY(const Eigen::Isometry3d& pose, std::vector<double>& xyzrpy);
-  static void convertToXYZRPY(const Eigen::Isometry3d& pose, double& x, double& y, double& z, double& roll, double& pitch,
-                              double& yaw);
+  static void convertToXYZRPY(const Eigen::Isometry3d& pose, double& x, double& y, double& z, double& roll,
+                              double& pitch, double& yaw);
   /**
    * \brief Create a random pose within bounds of random_pose_bounds_
    * \param Pose to fill in
@@ -994,7 +1035,7 @@ public:
    * \brief Create a pose of position (0,0,0) and quaternion (0,0,0,1)
    * \param Pose to fill in
    */
-  static void generateEmptyPose(geometry_msgs::Pose& pose);
+  static geometry_msgs::Pose getIdentityPose();
 
   /**
    * \brief Test if two Eigen poses are close enough
@@ -1058,7 +1099,7 @@ protected:
   ros::NodeHandle nh_;
 
   // Short name for this class
-  static RVIZ_VISUAL_TOOLS_DECL const std::string name_;
+  static RVIZ_VISUAL_TOOLS_DECL const std::string NAME;
 
   // Optional remote control
   RemoteControlPtr remote_control_;
@@ -1102,7 +1143,7 @@ protected:
   bool psychedelic_mode_ = false;
 
   // Chose random colors from this list
-  static const std::array<colors, 14> all_rand_colors_;
+  static const std::array<colors, 14> ALL_RAND_COLORS;
 
 public:
   EIGEN_MAKE_ALIGNED_OPERATOR_NEW  // http://eigen.tuxfamily.org/dox/group__TopicStructHavingEigenMembers.html
@@ -1112,5 +1153,3 @@ typedef std::shared_ptr<RvizVisualTools> RvizVisualToolsPtr;
 typedef std::shared_ptr<const RvizVisualTools> RvizVisualToolsConstPtr;
 
 }  // namespace rviz_visual_tools
-
-#endif  // RVIZ_VISUAL_TOOLS_RVIZ_VISUAL_TOOLS_H

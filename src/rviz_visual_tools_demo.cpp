@@ -406,8 +406,36 @@ public:
     visual_tools_->publishPath(path, colors);
     visual_tools_->trigger();
 
+    // --------------------------------------------------------------------
+    ROS_INFO_STREAM_NAMED(name_, "Displaying ABCD Plane");
+    double x_width = 0.15;
+    double y_width = 0.05;
+
+    Eigen::Vector3d n;
+    double a, b, c = 0, d;
+    y += space_between_rows;
+    double x_plane = 0, y_plane = y;
+
+    pose1 = Eigen::Isometry3d::Identity();
+    pose1.translation().x() = x_plane;
+    pose1.translation().y() = y_plane;
+    publishLabelHelper(pose1, "ABCD Plane");
+
+    for (std::size_t i = 0; i < 10; ++i)
+    {
+      x_plane = i * step;
+      a = x_plane;
+      b = y_plane;
+      // D takes this value to satisfy Ax+By+D=0
+      d = -(x_plane * x_plane + y_plane * y_plane);
+      visual_tools_->publishABCDPlane(a, b, c, d, rvt::MAGENTA, x_width, y_width);
+      x_location += step;
+    }
+
     // Set x location for next visualization function
     x_location += 1.25;
+
+    visual_tools_->trigger();
   }
 
   /** \brief Compare sizes of markers using all MEDIUM-scale markers */

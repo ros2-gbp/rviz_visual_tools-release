@@ -39,8 +39,9 @@
 #include <rviz_visual_tools/rviz_visual_tools.h>
 
 // Conversions
-#include <eigen_conversions/eigen_msg.h>
-#include <tf_conversions/tf_eigen.h>
+#include <tf2_eigen/tf2_eigen.h>
+#include <tf2_geometry_msgs/tf2_geometry_msgs.h>
+#include <tf2/convert.h>
 
 // C++
 #include <cmath>  // for random poses
@@ -51,15 +52,14 @@
 
 namespace rviz_visual_tools
 {
-
 const std::string LOGNAME = "visual_tools";
 
 // DEPRECATED, remove in Melodic after Dec 2018 release or so
-const std::string RvizVisualTools::name_ = "visual_tools";
+const std::string RvizVisualTools::NAME = "visual_tools";
 
-const std::array<colors, 14> RvizVisualTools::all_rand_colors_ = { RED,        GREEN,  BLUE,   GREY,   DARK_GREY,
-                                                                   WHITE,      ORANGE, YELLOW, BROWN,  PINK,
-                                                                   LIME_GREEN, PURPLE, CYAN,   MAGENTA };
+const std::array<colors, 14> RvizVisualTools::ALL_RAND_COLORS = { RED,        GREEN,  BLUE,   GREY,   DARK_GREY,
+                                                                  WHITE,      ORANGE, YELLOW, BROWN,  PINK,
+                                                                  LIME_GREEN, PURPLE, CYAN,   MAGENTA };
 
 RvizVisualTools::RvizVisualTools(std::string base_frame, std::string marker_topic, ros::NodeHandle nh)
   : nh_(nh), marker_topic_(std::move(marker_topic)), base_frame_(std::move(base_frame))
@@ -117,6 +117,8 @@ bool RvizVisualTools::loadRvizMarkers()
   arrow_marker_.action = visualization_msgs::Marker::ADD;
   // Lifetime
   arrow_marker_.lifetime = marker_lifetime_;
+  // Constants
+  arrow_marker_.pose = getIdentityPose();
 
   // Load cuboid ----------------------------------------------------
 
@@ -130,6 +132,8 @@ bool RvizVisualTools::loadRvizMarkers()
   cuboid_marker_.action = visualization_msgs::Marker::ADD;
   // Lifetime
   cuboid_marker_.lifetime = marker_lifetime_;
+  // Constants
+  cuboid_marker_.pose = getIdentityPose();
 
   // Load line ----------------------------------------------------
 
@@ -143,6 +147,8 @@ bool RvizVisualTools::loadRvizMarkers()
   line_strip_marker_.action = visualization_msgs::Marker::ADD;
   // Lifetime
   line_strip_marker_.lifetime = marker_lifetime_;
+  // Constants
+  line_strip_marker_.pose = getIdentityPose();
 
   // Load path ----------------------------------------------------
 
@@ -157,14 +163,7 @@ bool RvizVisualTools::loadRvizMarkers()
   // Lifetime
   line_list_marker_.lifetime = marker_lifetime_;
   // Constants
-  line_list_marker_.pose.position.x = 0.0;
-  line_list_marker_.pose.position.y = 0.0;
-  line_list_marker_.pose.position.z = 0.0;
-
-  line_list_marker_.pose.orientation.x = 0.0;
-  line_list_marker_.pose.orientation.y = 0.0;
-  line_list_marker_.pose.orientation.z = 0.0;
-  line_list_marker_.pose.orientation.w = 1.0;
+  line_list_marker_.pose = getIdentityPose();
 
   // Load sphers ----------------------------------------------------
 
@@ -179,14 +178,7 @@ bool RvizVisualTools::loadRvizMarkers()
   // Lifetime
   spheres_marker_.lifetime = marker_lifetime_;
   // Constants
-  spheres_marker_.pose.position.x = 0.0;
-  spheres_marker_.pose.position.y = 0.0;
-  spheres_marker_.pose.position.z = 0.0;
-
-  spheres_marker_.pose.orientation.x = 0.0;
-  spheres_marker_.pose.orientation.y = 0.0;
-  spheres_marker_.pose.orientation.z = 0.0;
-  spheres_marker_.pose.orientation.w = 1.0;
+  spheres_marker_.pose = getIdentityPose();
 
   // Load Block ----------------------------------------------------
   block_marker_.header.frame_id = base_frame_;
@@ -199,6 +191,8 @@ bool RvizVisualTools::loadRvizMarkers()
   block_marker_.type = visualization_msgs::Marker::CUBE;
   // Lifetime
   block_marker_.lifetime = marker_lifetime_;
+  // Constants
+  block_marker_.pose = getIdentityPose();
 
   // Load Cylinder ----------------------------------------------------
   cylinder_marker_.header.frame_id = base_frame_;
@@ -208,6 +202,8 @@ bool RvizVisualTools::loadRvizMarkers()
   cylinder_marker_.type = visualization_msgs::Marker::CYLINDER;
   // Lifetime
   cylinder_marker_.lifetime = marker_lifetime_;
+  // Constants
+  cylinder_marker_.pose = getIdentityPose();
 
   // Load Mesh ----------------------------------------------------
   mesh_marker_.header.frame_id = base_frame_;
@@ -218,6 +214,8 @@ bool RvizVisualTools::loadRvizMarkers()
   mesh_marker_.type = visualization_msgs::Marker::MESH_RESOURCE;
   // Lifetime
   mesh_marker_.lifetime = marker_lifetime_;
+  // Constants
+  mesh_marker_.pose = getIdentityPose();
 
   // Load Sphere -------------------------------------------------
   sphere_marker_.header.frame_id = base_frame_;
@@ -242,6 +240,8 @@ bool RvizVisualTools::loadRvizMarkers()
   sphere_marker_.colors.resize(1);
   // Lifetime
   sphere_marker_.lifetime = marker_lifetime_;
+  // Constants
+  sphere_marker_.pose = getIdentityPose();
 
   // Load Text ----------------------------------------------------
   // Set the namespace and id for this marker.  This serves to create a unique
@@ -253,6 +253,8 @@ bool RvizVisualTools::loadRvizMarkers()
   text_marker_.type = visualization_msgs::Marker::TEXT_VIEW_FACING;
   // Lifetime
   text_marker_.lifetime = marker_lifetime_;
+  // Constants
+  text_marker_.pose = getIdentityPose();
 
   // Load Triangle List -------------------------------------------
   // Set the namespace and id for this marker. This serves to create a unique ID
@@ -264,6 +266,8 @@ bool RvizVisualTools::loadRvizMarkers()
   triangle_marker_.type = visualization_msgs::Marker::TRIANGLE_LIST;
   // Lifetime
   triangle_marker_.lifetime = marker_lifetime_;
+  // Constants
+  triangle_marker_.pose = getIdentityPose();
 
   return true;
 }
@@ -325,8 +329,9 @@ bool RvizVisualTools::waitForSubscriber(const ros::Publisher& pub, double wait_t
     if (!blocking && ros::Time::now() > max_time)  // Check if timed out
     {
       ROS_WARN_STREAM_NAMED(LOGNAME, "Topic '" << pub.getTopic() << "' unable to connect to any subscribers within "
-                                             << wait_time << " sec. It is possible initially published visual messages "
-                                                             "will be lost.");
+                                               << wait_time
+                                               << " sec. It is possible initially published visual messages "
+                                                  "will be lost.");
       return false;
     }
     ros::spinOnce();
@@ -364,8 +369,8 @@ void RvizVisualTools::setLifetime(double lifetime)
 
 colors RvizVisualTools::getRandColor()
 {
-  const int rand_num = iRand(0, all_rand_colors_.size() - 1);
-  return all_rand_colors_[rand_num];
+  const int rand_num = iRand(0, ALL_RAND_COLORS.size() - 1);
+  return ALL_RAND_COLORS[rand_num];
 }
 
 std_msgs::ColorRGBA RvizVisualTools::getColor(colors color) const
@@ -487,8 +492,8 @@ std_msgs::ColorRGBA RvizVisualTools::getColor(colors color) const
       break;
     case DEFAULT:
       ROS_WARN_STREAM_NAMED(LOGNAME, "The 'DEFAULT' color should probably not "
-                                   "be used with getColor(). Defaulting to "
-                                   "blue.");
+                                     "be used with getColor(). Defaulting to "
+                                     "blue.");
     case BLUE:
     default:
       result.r = 0.1;
@@ -580,7 +585,7 @@ std_msgs::ColorRGBA RvizVisualTools::createRandColor() const
 {
   std_msgs::ColorRGBA result;
 
-  const std::size_t MAX_ATTEMPTS = 20;  // bound the performance
+  const std::size_t max_attempts = 20;  // bound the performance
   std::size_t attempts = 0;
 
   // Make sure color is not *too* dark
@@ -592,9 +597,9 @@ std_msgs::ColorRGBA RvizVisualTools::createRandColor() const
     // ROS_DEBUG_STREAM_NAMED(LOGNAME, "Looking for random color that is not too light, current value is "
     //<< (result.r + result.g + result.b) << " attempt #" << attempts);
     attempts++;
-    if (attempts > MAX_ATTEMPTS)
+    if (attempts > max_attempts)
     {
-      ROS_WARN_STREAM_NAMED(LOGNAME, "Unable to find appropriate random color after " << MAX_ATTEMPTS << " attempts");
+      ROS_WARN_STREAM_NAMED(LOGNAME, "Unable to find appropriate random color after " << max_attempts << " attempts");
       break;
     }
   } while (result.r + result.g + result.b < 1.5);  // 3 would be white
@@ -771,7 +776,7 @@ Eigen::Isometry3d RvizVisualTools::getVectorBetweenPoints(const Eigen::Vector3d&
     return result_pose;
   }
 
-  right_axis_vector.normalized();
+  right_axis_vector.normalize();
 
   if (verbose)
   {
@@ -782,33 +787,7 @@ Eigen::Isometry3d RvizVisualTools::getVectorBetweenPoints(const Eigen::Vector3d&
   double theta = axis_vector.dot(up_vector);
   double angle_rotation = -1.0 * acos(theta);
 
-  //-------------------------------------------
-  // Method 1 - TF - works
-
-  // Convert vector to TF format
-  tf::Vector3 tf_right_axis_vector;
-  tf::vectorEigenToTF(right_axis_vector, tf_right_axis_vector);
-
-  // Create quaternion using 'Axis angle Constructor'
-  //   axis: The axis which the rotation is around
-  //   angle: The magnitude of the rotation around the angle (Radians)
-  tf::Quaternion tf_q(tf_right_axis_vector, angle_rotation);
-
-  // Convert back to Eigen
-  tf::quaternionTFToEigen(tf_q, q);
-  //-------------------------------------------
-
-  if (verbose)
-  {
-    std::cout << "rotation matrix: " << std::endl;
-    std::cout << q.toRotationMatrix() << std::endl;
-  }
-
-  //-------------------------------------------
-  // Method 2 - Eigen - broken TODO(davetcoleman)
-  // q = Eigen::AngleAxis<double>(angle_rotation, right_axis_vector);
-  //-------------------------------------------
-  // std::cout << q.toRotationMatrix() << std::endl;
+  q = Eigen::AngleAxis<double>(angle_rotation, right_axis_vector);
 
   q.normalize();
 
@@ -917,6 +896,29 @@ bool RvizVisualTools::publishMarkers(visualization_msgs::MarkerArray& markers)
     }
   }
 
+  for (auto& marker : markers.markers)
+  {
+    double norm = 0;
+    norm += marker.pose.orientation.w * marker.pose.orientation.w;
+    norm += marker.pose.orientation.x * marker.pose.orientation.x;
+    norm += marker.pose.orientation.y * marker.pose.orientation.y;
+    norm += marker.pose.orientation.z * marker.pose.orientation.z;
+    norm = std::sqrt(norm);
+    if (norm < std::numeric_limits<double>::epsilon())
+    {
+      marker.pose.orientation.w = 1;
+      marker.pose.orientation.x = 0;
+      marker.pose.orientation.y = 0;
+      marker.pose.orientation.z = 0;
+    }
+    else
+    {
+      marker.pose.orientation.w = marker.pose.orientation.w / norm;
+      marker.pose.orientation.x = marker.pose.orientation.x / norm;
+      marker.pose.orientation.y = marker.pose.orientation.y / norm;
+      marker.pose.orientation.z = marker.pose.orientation.z / norm;
+    }
+  }
   // Publish
   pub_rviz_markers_.publish(markers);
   return true;
@@ -936,7 +938,7 @@ bool RvizVisualTools::publishCone(const geometry_msgs::Pose& pose, double angle,
   triangle_marker_.pose = pose;
 
   geometry_msgs::Point p[3];
-  static const double delta_theta = M_PI / 16.0;
+  static const double DELTA_THETA = M_PI / 16.0;
   double theta = 0;
 
   triangle_marker_.points.clear();
@@ -951,14 +953,14 @@ bool RvizVisualTools::publishCone(const geometry_msgs::Pose& pose, double angle,
     p[1].z = scale * sin(theta) / angle;
 
     p[2].x = scale;
-    p[2].y = scale * cos(theta + delta_theta) / angle;
-    p[2].z = scale * sin(theta + delta_theta) / angle;
+    p[2].y = scale * cos(theta + DELTA_THETA) / angle;
+    p[2].z = scale * sin(theta + DELTA_THETA) / angle;
 
     triangle_marker_.points.push_back(p[0]);
     triangle_marker_.points.push_back(p[1]);
     triangle_marker_.points.push_back(p[2]);
 
-    theta += delta_theta;
+    theta += DELTA_THETA;
   }
 
   triangle_marker_.scale.x = 1.0;
@@ -966,6 +968,30 @@ bool RvizVisualTools::publishCone(const geometry_msgs::Pose& pose, double angle,
   triangle_marker_.scale.z = 1.0;
 
   return publishMarker(triangle_marker_);
+}
+
+bool RvizVisualTools::publishABCDPlane(const double A, const double B, const double C, const double D, colors color,
+                                       double x_width, double y_width)
+{
+  // The coefficients A,B,C give the normal to the plane.
+  Eigen::Vector3d n(A, B, C);
+
+  // Graphic is centered at this point
+  double distance = D / n.norm();
+  Eigen::Vector3d center = -distance * n.normalized();
+
+  Eigen::Isometry3d pose;
+  pose.translation() = center;
+
+  // Calculate the rotation matrix from the original normal z_0 = (0,0,1) to new normal n = (A,B,C)
+  Eigen::Vector3d z_0 = Eigen::Vector3d::UnitZ();
+  Eigen::Quaterniond q = Eigen::Quaterniond::FromTwoVectors(z_0, n);
+  pose.linear() = q.toRotationMatrix();
+
+  double height = 0.001;  // very thin
+  publishCuboid(pose, x_width, y_width, height, color);
+
+  return true;
 }
 
 bool RvizVisualTools::publishXYPlane(const Eigen::Isometry3d& pose, colors color, double scale)
@@ -1116,22 +1142,22 @@ bool RvizVisualTools::publishSphere(const Eigen::Vector3d& point, colors color, 
                                     std::size_t id)
 {
   geometry_msgs::Pose pose_msg;
-  tf::pointEigenToMsg(point, pose_msg.position);
+  tf2::convert(point, pose_msg.position);
   return publishSphere(pose_msg, color, scale, ns, id);
 }
 
 bool RvizVisualTools::publishSphere(const Eigen::Vector3d& point, colors color, double scale, const std::string& ns,
                                     std::size_t id)
 {
-  geometry_msgs::Pose pose_msg;
-  tf::pointEigenToMsg(point, pose_msg.position);
+  geometry_msgs::Pose pose_msg = getIdentityPose();
+  tf2::convert(point, pose_msg.position);
   return publishSphere(pose_msg, color, scale, ns, id);
 }
 
 bool RvizVisualTools::publishSphere(const geometry_msgs::Point& point, colors color, scales scale,
                                     const std::string& ns, std::size_t id)
 {
-  geometry_msgs::Pose pose_msg;
+  geometry_msgs::Pose pose_msg = getIdentityPose();
   pose_msg.position = point;
   return publishSphere(pose_msg, color, scale, ns, id);
 }
@@ -1167,8 +1193,8 @@ bool RvizVisualTools::publishSphere(const Eigen::Isometry3d& pose, const std_msg
 bool RvizVisualTools::publishSphere(const Eigen::Vector3d& point, const std_msgs::ColorRGBA& color,
                                     const geometry_msgs::Vector3 scale, const std::string& ns, std::size_t id)
 {
-  geometry_msgs::Pose pose_msg;
-  tf::pointEigenToMsg(point, pose_msg.position);
+  geometry_msgs::Pose pose_msg = getIdentityPose();
+  tf2::convert(point, pose_msg.position);
   return publishSphere(pose_msg, color, scale, ns, id);
 }
 
@@ -1561,8 +1587,8 @@ bool RvizVisualTools::publishCylinder(const geometry_msgs::Pose& pose, const std
   return publishMarker(cylinder_marker_);
 }
 
-bool RvizVisualTools::publishMesh(const Eigen::Isometry3d& pose, const std::string& file_name, colors color, double scale,
-                                  const std::string& ns, std::size_t id)
+bool RvizVisualTools::publishMesh(const Eigen::Isometry3d& pose, const std::string& file_name, colors color,
+                                  double scale, const std::string& ns, std::size_t id)
 {
   return publishMesh(convertPose(pose), file_name, color, scale, ns, id);
 }
@@ -1603,6 +1629,51 @@ bool RvizVisualTools::publishMesh(const geometry_msgs::Pose& pose, const std::st
 
   // Helper for publishing rviz markers
   return publishMarker(mesh_marker_);
+}
+
+bool RvizVisualTools::publishMesh(const Eigen::Isometry3d& pose, const shape_msgs::Mesh& mesh, colors color,
+                                  double scale, const std::string& ns, std::size_t id)
+{
+  return publishMesh(convertPose(pose), mesh, color, scale, ns, id);
+}
+
+bool RvizVisualTools::publishMesh(const geometry_msgs::Pose& pose, const shape_msgs::Mesh& mesh, colors color,
+                                  double scale, const std::string& ns, std::size_t id)
+{
+  triangle_marker_.header.stamp = ros::Time::now();
+
+  if (id == 0)
+  {
+    triangle_marker_.id++;
+  }
+  else
+  {
+    triangle_marker_.id = id;
+  }
+
+  // Set the mesh
+  triangle_marker_.points.clear();
+  for (const shape_msgs::MeshTriangle& triangle : mesh.triangles)
+    for (const uint32_t& index : triangle.vertex_indices)
+      triangle_marker_.points.push_back(mesh.vertices[index]);
+
+  // Set the pose
+  triangle_marker_.pose = pose;
+
+  // Set marker size
+  triangle_marker_.scale.x = scale;
+  triangle_marker_.scale.y = scale;
+  triangle_marker_.scale.z = scale;
+
+  // Set the namespace and id for this marker.  This serves to create a unique
+  // ID
+  triangle_marker_.ns = ns;
+
+  // Set marker color
+  triangle_marker_.color = getColor(color);
+
+  // Helper for publishing rviz markers
+  return publishMarker(triangle_marker_);
 }
 
 bool RvizVisualTools::publishGraph(const graph_msgs::GeometryGraph& graph, colors color, double radius)
@@ -1661,7 +1732,7 @@ bool RvizVisualTools::publishCuboid(const geometry_msgs::Point& point1, const ge
   cuboid_marker_.color = getColor(color);
 
   // Calculate center pose
-  geometry_msgs::Pose pose;
+  geometry_msgs::Pose pose = getIdentityPose();
   pose.position.x = (point1.x - point2.x) / 2.0 + point2.x;
   pose.position.y = (point1.y - point2.y) / 2.0 + point2.y;
   pose.position.z = (point1.z - point2.z) / 2.0 + point2.z;
@@ -1737,6 +1808,16 @@ bool RvizVisualTools::publishCuboid(const geometry_msgs::Pose& pose, double dept
   return publishMarker(cuboid_marker_);
 }
 
+bool RvizVisualTools::publishCuboid(const Eigen::Isometry3d& pose, const Eigen::Vector3d& size, colors color)
+{
+  return publishCuboid(pose, size.x(), size.y(), size.z(), color);
+}
+
+bool RvizVisualTools::publishCuboid(const geometry_msgs::Pose& pose, const geometry_msgs::Vector3& size, colors color)
+{
+  return publishCuboid(pose, size.x, size.y, size.z, color);
+}
+
 bool RvizVisualTools::publishLine(const Eigen::Isometry3d& point1, const Eigen::Isometry3d& point2, colors color,
                                   scales scale)
 {
@@ -1795,6 +1876,8 @@ bool RvizVisualTools::publishLine(const geometry_msgs::Point& point1, const geom
   line_strip_marker_.id++;
   line_strip_marker_.color = color;
   line_strip_marker_.scale = scale;
+  line_strip_marker_.scale.y = 0;
+  line_strip_marker_.scale.z = 0;
 
   line_strip_marker_.points.clear();
   line_strip_marker_.points.push_back(point1);
@@ -1810,22 +1893,23 @@ bool RvizVisualTools::publishLines(const EigenSTL::vector_Vector3d& aPoints, con
   BOOST_ASSERT_MSG(aPoints.size() == bPoints.size() && bPoints.size() == colors.size(), "Mismatching vector sizes: "
                                                                                         "aPoints, bPoints, and colors");
 
-  std::vector<geometry_msgs::Point> aPoints_msg;
-  std::vector<geometry_msgs::Point> bPoints_msg;
+  std::vector<geometry_msgs::Point> a_points_msg;
+  std::vector<geometry_msgs::Point> b_points_msg;
   std::vector<std_msgs::ColorRGBA> colors_msg;
 
   for (std::size_t i = 0; i < aPoints.size(); ++i)
   {
     // Convert Eigen to ROS Msg
-    aPoints_msg.push_back(convertPoint(aPoints[i]));
-    bPoints_msg.push_back(convertPoint(bPoints[i]));
+    a_points_msg.push_back(convertPoint(aPoints[i]));
+    b_points_msg.push_back(convertPoint(bPoints[i]));
     // Convert color to ROS Msg
     colors_msg.push_back(getColor(colors[i]));
   }
-  BOOST_ASSERT_MSG(aPoints_msg.size() == bPoints_msg.size() && bPoints_msg.size() == colors_msg.size(), "Mismatched "
-                                                                                                        "vector sizes");
+  BOOST_ASSERT_MSG(a_points_msg.size() == b_points_msg.size() && b_points_msg.size() == colors_msg.size(),
+                   "Mismatched "
+                   "vector sizes");
 
-  return publishLines(aPoints_msg, bPoints_msg, colors_msg, getScale(scale));
+  return publishLines(a_points_msg, b_points_msg, colors_msg, getScale(scale));
 }
 
 bool RvizVisualTools::publishLines(const std::vector<geometry_msgs::Point>& aPoints,
@@ -1840,6 +1924,9 @@ bool RvizVisualTools::publishLines(const std::vector<geometry_msgs::Point>& aPoi
   line_list_marker_.id++;
 
   line_list_marker_.scale = scale;
+  line_list_marker_.scale.z = 0;
+  line_list_marker_.scale.y = 0;
+
   // line_list_marker_.color = getColor(BLUE); // This var is not used
 
   // Add each point pair to the line message
@@ -1878,6 +1965,8 @@ bool RvizVisualTools::publishLineStrip(const std::vector<geometry_msgs::Point>& 
 
   std_msgs::ColorRGBA this_color = getColor(color);
   line_strip_marker_.scale = getScale(scale);
+  line_strip_marker_.scale.z = 0;
+  line_strip_marker_.scale.y = 0;
   line_strip_marker_.color = this_color;
   line_strip_marker_.points.clear();
   line_strip_marker_.colors.clear();
@@ -1991,7 +2080,7 @@ bool RvizVisualTools::publishPath(const EigenSTL::vector_Vector3d& path, const s
   if (path.size() != colors.size())
   {
     ROS_ERROR_STREAM_NAMED(LOGNAME, "Skipping path because " << path.size() << " different from " << colors.size()
-                                                           << ".");
+                                                             << ".");
     return false;
   }
 
@@ -2016,7 +2105,7 @@ bool RvizVisualTools::publishPath(const EigenSTL::vector_Vector3d& path, const s
   if (path.size() != colors.size())
   {
     ROS_ERROR_STREAM_NAMED(LOGNAME, "Skipping path because " << path.size() << " different from " << colors.size()
-                                                           << ".");
+                                                             << ".");
     return false;
   }
 
@@ -2100,6 +2189,8 @@ bool RvizVisualTools::publishWireframeCuboid(const Eigen::Isometry3d& pose, cons
 
   std_msgs::ColorRGBA this_color = getColor(color);
   line_list_marker_.scale = getScale(XXSMALL);
+  line_list_marker_.scale.y = 0;
+  line_list_marker_.scale.z = 0;
   line_list_marker_.color = this_color;
   line_list_marker_.points.clear();
   line_list_marker_.colors.clear();
@@ -2169,8 +2260,8 @@ bool RvizVisualTools::publishWireframeCuboid(const Eigen::Isometry3d& pose, cons
   return publishMarker(line_list_marker_);
 }
 
-bool RvizVisualTools::publishWireframeRectangle(const Eigen::Isometry3d& pose, double height, double width, colors color,
-                                                scales scale, std::size_t id)
+bool RvizVisualTools::publishWireframeRectangle(const Eigen::Isometry3d& pose, double height, double width,
+                                                colors color, scales scale, std::size_t id)
 {
   if (id == 0)
   {  // Provide a new id every call to this function
@@ -2198,6 +2289,9 @@ bool RvizVisualTools::publishWireframeRectangle(const Eigen::Isometry3d& pose, d
 
   std_msgs::ColorRGBA this_color = getColor(color);
   line_list_marker_.scale = getScale(scale, 0.25);
+  line_list_marker_.scale.y = 0;
+  line_list_marker_.scale.z = 0;
+
   line_list_marker_.color = this_color;
   line_list_marker_.points.clear();
   line_list_marker_.colors.clear();
@@ -2251,6 +2345,8 @@ bool RvizVisualTools::publishWireframeRectangle(const Eigen::Isometry3d& pose, c
 
   std_msgs::ColorRGBA this_color = getColor(color);
   line_list_marker_.scale = getScale(scale, 0.25);
+  line_list_marker_.scale.y = 0;
+  line_list_marker_.scale.z = 0;
   line_list_marker_.color = this_color;
   line_list_marker_.points.clear();
   line_list_marker_.colors.clear();
@@ -2423,7 +2519,8 @@ bool RvizVisualTools::publishText(const geometry_msgs::Pose& pose, const std::st
   text_marker_.pose = pose;
   text_marker_.color = getColor(color);
   text_marker_.scale = scale;
-
+  text_marker_.scale.x = 0;
+  text_marker_.scale.y = 0;
   // Helper for publishing rviz markers
   publishMarker(text_marker_);
 
@@ -2439,35 +2536,35 @@ bool RvizVisualTools::publishText(const geometry_msgs::Pose& pose, const std::st
 geometry_msgs::Pose RvizVisualTools::convertPose(const Eigen::Isometry3d& pose)
 {
   geometry_msgs::Pose pose_msg;
-  tf::poseEigenToMsg(pose, pose_msg);
+  tf2::convert(pose, pose_msg);
   return pose_msg;
 }
 
 void RvizVisualTools::convertPoseSafe(const Eigen::Isometry3d& pose, geometry_msgs::Pose& pose_msg)
 {
-  tf::poseEigenToMsg(pose, pose_msg);
+  tf2::convert(pose, pose_msg);
 }
 
 Eigen::Isometry3d RvizVisualTools::convertPose(const geometry_msgs::Pose& pose)
 {
-  Eigen::Isometry3d shared_pose_eigen_;
-  tf::poseMsgToEigen(pose, shared_pose_eigen_);
-  return shared_pose_eigen_;
+  Eigen::Isometry3d shared_pose_eigen;
+  tf2::convert(pose, shared_pose_eigen);
+  return shared_pose_eigen;
 }
 
 void RvizVisualTools::convertPoseSafe(const geometry_msgs::Pose& pose_msg, Eigen::Isometry3d& pose)
 {
-  tf::poseMsgToEigen(pose_msg, pose);
+  tf2::convert(pose_msg, pose);
 }
 
 Eigen::Isometry3d RvizVisualTools::convertPoint32ToPose(const geometry_msgs::Point32& point)
 {
-  Eigen::Isometry3d shared_pose_eigen_;
-  shared_pose_eigen_ = Eigen::Isometry3d::Identity();
-  shared_pose_eigen_.translation().x() = point.x;
-  shared_pose_eigen_.translation().y() = point.y;
-  shared_pose_eigen_.translation().z() = point.z;
-  return shared_pose_eigen_;
+  Eigen::Isometry3d shared_pose_eigen;
+  shared_pose_eigen = Eigen::Isometry3d::Identity();
+  shared_pose_eigen.translation().x() = point.x;
+  shared_pose_eigen.translation().y() = point.y;
+  shared_pose_eigen.translation().z() = point.z;
+  return shared_pose_eigen;
 }
 
 geometry_msgs::Pose RvizVisualTools::convertPointToPose(const geometry_msgs::Point& point)
@@ -2483,16 +2580,16 @@ geometry_msgs::Pose RvizVisualTools::convertPointToPose(const geometry_msgs::Poi
 
 Eigen::Isometry3d RvizVisualTools::convertPointToPose(const Eigen::Vector3d& point)
 {
-  Eigen::Isometry3d shared_pose_eigen_;
-  shared_pose_eigen_ = Eigen::Isometry3d::Identity();
-  shared_pose_eigen_.translation() = point;
-  return shared_pose_eigen_;
+  Eigen::Isometry3d shared_pose_eigen;
+  shared_pose_eigen = Eigen::Isometry3d::Identity();
+  shared_pose_eigen.translation() = point;
+  return shared_pose_eigen;
 }
 
 geometry_msgs::Point RvizVisualTools::convertPoseToPoint(const Eigen::Isometry3d& pose)
 {
   geometry_msgs::Pose pose_msg;
-  tf::poseEigenToMsg(pose, pose_msg);
+  tf2::convert(pose, pose_msg);
   return pose_msg.position;
 }
 
@@ -2542,7 +2639,7 @@ geometry_msgs::Point RvizVisualTools::convertPoint(const Eigen::Vector3d& point)
 }
 
 Eigen::Isometry3d RvizVisualTools::convertFromXYZRPY(double tx, double ty, double tz, double rx, double ry, double rz,
-                                                   EulerConvention convention)
+                                                     EulerConvention convention)
 {
   Eigen::Isometry3d result;
 
@@ -2671,8 +2768,9 @@ void RvizVisualTools::generateRandomPose(Eigen::Isometry3d& pose, RandomPoseBoun
   pose = Eigen::Translation3d(pose.translation().x(), pose.translation().y(), pose.translation().z()) * quaternion;
 }
 
-void RvizVisualTools::generateEmptyPose(geometry_msgs::Pose& pose)
+geometry_msgs::Pose RvizVisualTools::getIdentityPose()
 {
+  geometry_msgs::Pose pose;
   // Position
   pose.position.x = 0;
   pose.position.y = 0;
@@ -2683,6 +2781,7 @@ void RvizVisualTools::generateEmptyPose(geometry_msgs::Pose& pose)
   pose.orientation.y = 0;
   pose.orientation.z = 0;
   pose.orientation.w = 1;
+  return pose;
 }
 
 bool RvizVisualTools::posesEqual(const Eigen::Isometry3d& pose1, const Eigen::Isometry3d& pose2, double threshold)

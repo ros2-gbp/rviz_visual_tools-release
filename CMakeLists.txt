@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 2.8.6)
+cmake_minimum_required(VERSION 3.0.2)
 project(rviz_visual_tools)
 
 if(NOT MSVC)
@@ -14,17 +14,19 @@ endif()
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 find_package(catkin REQUIRED COMPONENTS
-  eigen_conversions
   eigen_stl_containers
   geometry_msgs
   graph_msgs
+  shape_msgs
   roscpp
   roslint
   rostest
   rviz
   sensor_msgs
   std_msgs
-  tf_conversions
+  tf2_eigen
+  tf2_ros
+  tf2_geometry_msgs
   trajectory_msgs
   visualization_msgs
 )
@@ -62,13 +64,14 @@ catkin_package(
     ${PROJECT_NAME}_remote_control
     ${PROJECT_NAME}_imarker_simple
   CATKIN_DEPENDS
-    eigen_conversions
     geometry_msgs
     graph_msgs
+    shape_msgs
     roscpp
     sensor_msgs
     std_msgs
-    tf_conversions
+    tf2_eigen
+    tf2_ros
     trajectory_msgs
     visualization_msgs
   INCLUDE_DIRS

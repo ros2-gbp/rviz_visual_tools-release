@@ -38,8 +38,7 @@
    because of https://github.com/ros/geometry_experimental/issues/108
 */
 
-#ifndef RVIZ_VISUAL_TOOLS_TF_VISUAL_TOOLS_H
-#define RVIZ_VISUAL_TOOLS_TF_VISUAL_TOOLS_H
+#pragma once
 
 // C++
 #include <vector>
@@ -77,6 +76,11 @@ public:
   bool publishTransform(const Eigen::Isometry3d& transform, const std::string& from_frame, const std::string& to_frame);
 
   /**
+   * \brief Clear all transforms
+   */
+  void clearAllTransforms();
+
+  /**
    * \brief At a certain frequency update the tf transforms that we are tracking
    *        This is called internally by a clock, you should not need to use this
    *        TODO: make private in next release?
@@ -102,5 +106,3 @@ typedef boost::shared_ptr<TFVisualTools> TFVisualToolsPtr;
 typedef boost::shared_ptr<const TFVisualTools> TFVisualToolsConstPtr;
 
 }  // namespace rviz_visual_tools
-
-#endif  // RVIZ_VISUAL_TOOLS_TF_VISUAL_TOOLS_H

@@ -38,8 +38,8 @@
 
 #include <rviz_visual_tools/tf_visual_tools.h>
 
-// TF
-#include <eigen_conversions/eigen_msg.h>
+// TF2
+#include <tf2_eigen/tf2_eigen.h>
 
 // C++
 #include <string>
@@ -60,22 +60,21 @@ bool TFVisualTools::publishTransform(const Eigen::Isometry3d& transform, const s
   ROS_DEBUG_STREAM_NAMED("tf_visual_tools", "Publishing transform from " << from_frame << " to " << to_frame);
 
   // Create transform msg
-  geometry_msgs::TransformStamped tf2_msg;
+  geometry_msgs::TransformStamped tf2_msg = tf2::eigenToTransform(transform);
   tf2_msg.header.stamp = ros::Time::now();
-  tf::transformEigenToMsg(transform, tf2_msg.transform);
 
   // Prevent TF_DENORMALIZED_QUATERNION errors in TF2 from happening.
-  double quatNorm;
+  double quat_norm;
 
   // Normalizing the Quaternion
-  quatNorm = 1 / sqrt(tf2_msg.transform.rotation.x * tf2_msg.transform.rotation.x +
-                      tf2_msg.transform.rotation.y * tf2_msg.transform.rotation.y +
-                      tf2_msg.transform.rotation.z * tf2_msg.transform.rotation.z +
-                      tf2_msg.transform.rotation.w * tf2_msg.transform.rotation.w);
-  tf2_msg.transform.rotation.x *= quatNorm;
-  tf2_msg.transform.rotation.y *= quatNorm;
-  tf2_msg.transform.rotation.z *= quatNorm;
-  tf2_msg.transform.rotation.w *= quatNorm;
+  quat_norm = 1 / sqrt(tf2_msg.transform.rotation.x * tf2_msg.transform.rotation.x +
+                       tf2_msg.transform.rotation.y * tf2_msg.transform.rotation.y +
+                       tf2_msg.transform.rotation.z * tf2_msg.transform.rotation.z +
+                       tf2_msg.transform.rotation.w * tf2_msg.transform.rotation.w);
+  tf2_msg.transform.rotation.x *= quat_norm;
+  tf2_msg.transform.rotation.y *= quat_norm;
+  tf2_msg.transform.rotation.z *= quat_norm;
+  tf2_msg.transform.rotation.w *= quat_norm;
 
   tf2_msg.header.frame_id = from_frame;
   tf2_msg.child_frame_id = to_frame;
@@ -94,6 +93,11 @@ bool TFVisualTools::publishTransform(const Eigen::Isometry3d& transform, const s
   transforms_.push_back(tf2_msg);
 
   return true;
+}
+
+void TFVisualTools::clearAllTransforms()
+{
+  transforms_.clear();
 }
 
 void TFVisualTools::publishAllTransforms(const ros::TimerEvent& /*e*/)
