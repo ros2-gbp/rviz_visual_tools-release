@@ -54,8 +54,8 @@
 
 namespace rviz_visual_tools
 {
-using visualization_msgs::InteractiveMarkerFeedback;
 using visualization_msgs::InteractiveMarkerControl;
+using visualization_msgs::InteractiveMarkerFeedback;
 
 typedef std::function<void(const visualization_msgs::InteractiveMarkerFeedbackConstPtr&)> IMarkerCallback;
 
@@ -67,13 +67,14 @@ geometry_msgs::Pose getIdentityPose()
   pose.orientation.w = 1.0;
   return pose;
 }
-}
+}  // namespace
 
 class IMarkerSimple
 {
 public:
   explicit IMarkerSimple(const std::string& name = "imarker", double scale = 0.2,
-                         const geometry_msgs::Pose& initial_pose = getIdentityPose());
+                         const geometry_msgs::Pose& initial_pose = getIdentityPose(),
+                         const std::string& parent_frame = "world");
 
   geometry_msgs::Pose& getPose();
 
@@ -91,7 +92,8 @@ public:
 private:
   void sendUpdatedIMarkerPose();
 
-  void make6DofMarker(const geometry_msgs::Pose& pose, double scale = 0.2);
+  void make6DofMarker(const geometry_msgs::Pose& pose = getIdentityPose(), double scale = 0.2,
+                      const std::string& parent_frame = "world");
 
   // --------------------------------------------------------
 
