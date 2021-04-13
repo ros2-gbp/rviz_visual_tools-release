@@ -1,3 +1,26 @@
+## rviz_visual_tools (foxy) - 4.0.0-1
+
+The packages in the `rviz_visual_tools` repository were released into the `foxy` distro by running `/usr/bin/bloom-release rviz_visual_tools -t foxy -r foxy` on `Tue, 13 Apr 2021 14:53:22 -0000`
+
+The `rviz_visual_tools` package was released.
+
+Version of package(s) in repository `rviz_visual_tools`:
+
+- upstream repository: https://github.com/PickNikRobotics/rviz_visual_tools.git
+- release repository: unknown
+- rosdistro version: `null`
+- old version: `null`
+- new version: `4.0.0-1`
+
+Versions of tools used:
+
+- bloom version: `0.10.6`
+- catkin_pkg version: `0.4.23`
+- rosdep version: `0.20.0`
+- rosdistro version: `0.8.3`
+- vcstools version: `0.1.42`
+
+
 ## rviz_visual_tools (noetic) - 3.9.1-1
 
 The packages in the `rviz_visual_tools` repository were released into the `noetic` distro by running `/usr/bin/bloom-release --rosdistro noetic rviz_visual_tools` on `Fri, 09 Oct 2020 18:46:24 -0000`
