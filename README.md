@@ -16,10 +16,9 @@ This package includes:
  - A tf publishing helper class
  - An interactive marker helper class
 
+Developed by [Dave Coleman](http://dav.ee) at the Correll Robotics Lab, University of Colorado Boulder with help from Andy McEvoy and many others.
 
-<img src="https://picknik.ai/assets/images/logo.jpg" width="120">
-
-This open source project was developed at [PickNik Robotics](https://picknik.ai/). Need professional ROS development and consulting? Contact us at projects@picknik.ai for a free consultation.
+<a href='https://ko-fi.com/A7182AMW' target='_blank'><img height='36' style='border:0px;height:36px;' src='https://az743702.vo.msecnd.net/cdn/kofi2.png?v=0' border='0' alt='Buy Me a Coffee at ko-fi.com' /></a>
 
  * [![Build Status](https://travis-ci.org/PickNikRobotics/rviz_visual_tools.svg)](https://travis-ci.org/PickNikRobotics/rviz_visual_tools) Travis CI
  * [![Build Status](http://build.ros.org/buildStatus/icon?job=Kbin_uX64__rviz_visual_tools__ubuntu_xenial_amd64__binary)](http://build.ros.org/view/Kbin_uX64/job/Kbin_uX64__rviz_visual_tools__ubuntu_xenial_amd64__binary/) ROS Kinetic Buildfarm - AMD64 Xenial Debian Build for Ubuntu 16.04
@@ -35,25 +34,25 @@ This open source project was developed at [PickNik Robotics](https://picknik.ai/
 ### Ubuntu Debian
 
 ```
-sudo apt-get install ros-melodic-rviz-visual-tools
+sudo apt-get install ros-${ROS_DISTRO}-rviz-visual-tools
 ```
 
 ### Build from Source
 
 Clone this repository into a catkin workspace, then use the rosdep install tool to automatically download its dependencies. Depending on your current version of ROS, use:
 ```
-rosdep install --from-paths src --ignore-src --rosdistro melodic
+rosdep install --from-paths src --ignore-src --rosdistro ${ROS_DISTRO}
 ```
 
 ## Quick Start Demo
 
 To see random shapes generated in Rviz, first launch Rviz:
 
-    roslaunch rviz_visual_tools demo_rviz.launch
+    ros2 launch rviz_visual_tools demo_rviz.launch.py
 
-Then start demo:
+Then start the RViz Visual Tools demo:
 
-    roslaunch rviz_visual_tools demo.launch
+    ros2 run rviz_visual_tools rviz_visual_tools_demo
 
 ## Code API
 
@@ -67,7 +66,7 @@ We'll assume you will be using these helper functions within a class. Almost all
 
 Add to your includes:
 ```
-#include <rviz_visual_tools/rviz_visual_tools.h>
+#include <rviz_visual_tools/rviz_visual_tools.hpp>
 ```
 
 Add to your class's member variables:
@@ -78,7 +77,7 @@ rviz_visual_tools::RvizVisualToolsPtr visual_tools_;
 
 In your class' constructor add:
 ```
-visual_tools_.reset(new rviz_visual_tools::RvizVisualTools("base_frame","/rviz_visual_markers"));
+visual_tools_.reset(new rviz_visual_tools::RvizVisualTools("base_frame","/rviz_visual_markers", node));
 ```
 
 Change the first parameter to the name of your robot's base frame, and the second parameter to whatever name you'd like to use for the corresponding Rviz marker ROS topic.
@@ -105,9 +104,10 @@ In the following snippet we create a pose at xyz (0.1, 0.1, 0.1) and rotate the 
     // Don't forget to trigger the publisher!
     visual_tools_->trigger();
 
-For more example code see [rviz_visual_tools_demo.cpp](https://github.com/PickNikRobotics/rviz_visual_tools/blob/melodic-devel/src/rviz_visual_tools_demo.cpp)
+For more example code see [rviz_visual_tools_demo.cpp](https://github.com/PickNikRobotics/rviz_visual_tools/blob/eloquent-devel/src/rviz_visual_tools_demo.cpp)
 
 ## Rviz GUI Usage
+**NOT PORTED**
 
 Publishes on the topic of ``/rviz_visual_tools_gui``
 
@@ -123,12 +123,14 @@ The buttons in the [Joy](http://docs.ros.org/api/sensor_msgs/html/msg/Joy.html) 
 Note: only Next is fully implemented
 
 ### Mouse-Based Control
+**NOT PORTED**
 
 ![](resources/dashboard_screenshot.png)
 
 Use the Rviz panel called "RvizVisualToolsGui" to step through your program.
 
 ### Keyboard-Based Control
+**NOT PORTED**
 
 ![](resources/keytool_screenshot.png)
 
@@ -173,6 +175,7 @@ And more...
 
 Reset function
 
+ - ``deleteMarker(std::string namespace, std::size_t id)`` - tells Rviz to clear a specific marker from being displayed.
  - ``deleteAllMarkers()`` - tells Rviz to clear out all current markers from being displayed.
 
 All markers must be triggered after being published, by calling the ``trigger()`` function. This allows batch publishing to be achieved by only calling after several markers have been created, greatly increasing the speed of your application. You can even explicitly tell ``rviz_visual_tools`` how often to publish via the ``triggerEvery(NUM_MARKERS)`` command:
@@ -250,8 +253,8 @@ This package helps you quickly choose colors - feel free to send PRs with more c
 
 This class quickly gives you basic 6dof pose interactive marker funcitonality. A demo is available:
 
-    roslaunch rviz_visual_tools demo_rviz.launch
-    rosrun rviz_visual_tools imarker_simple_demo
+    ros2 launch rviz_visual_tools demo_rviz.launch.py
+    ros2 run rviz_visual_tools rviz_visual_tools_imarker_simple_demo
 
 ## TF Visual Tools
 
@@ -265,36 +268,29 @@ This tool lets you easily debug Eigen transforms in Rviz. Demo use:
 
 ## Testing and Linting
 
-To run [roslint](http://wiki.ros.org/roslint), use the following command with [catkin-tools](https://catkin-tools.readthedocs.org/):
+[ROSlint](http://wiki.ros.org/roslint) is now run as a ROS test which can be run with the the following commands from your workspace directory (eg: ./ws_ros2).
 
-    catkin build --no-status --no-deps --this --make-args roslint
-
-To run [catkin lint](https://pypi.python.org/pypi/catkin_lint), use the following command with [catkin-tools](https://catkin-tools.readthedocs.org/):
-
-    catkin lint -W2
-
-Use the following command with [catkin-tools](https://catkin-tools.readthedocs.org/) to run the small amount of available tests:
-
-    catkin run_tests --no-deps --this -i
+    catkin build --packages-select rviz_visual_tools
+    catkin test --packages-select rviz_visual_tools
 
 Run with clang-tidy:
 
-    run-clang-tidy-4.0.py -clang-tidy-binary=/usr/lib/llvm-4.0/bin/clang-tidy -fix -p=/home/dave/ros/current/ws_moveit/build/rviz_visual_tools .
+    run-clang-tidy-4.0.py -clang-tidy-binary=/usr/lib/llvm-4.0/bin/clang-tidy -fix -p=$COLCON_WS/build/rviz_visual_tools .
 
 ## Docker Image
 
-[Dockerhub](https://hub.docker.com/r/davetcoleman/rviz_visual_tools/builds/) automatically creates a Docker for this repo. To run with GUI:
+[Dockerhub](https://hub.docker.com/r/picknik/rviz_visual_tools/builds/) automatically creates a Docker for this repo. To run with GUI:
 
     # This is not the safest way however, as you then compromise the access control to X server on your host
     xhost +local:root # for the lazy and reckless
-    docker run -it --env="DISPLAY" --env="QT_X11_NO_MITSHM=1" --volume="/tmp/.X11-unix:/tmp/.X11-unix:rw" davetcoleman/rviz_visual_tools:melodic
+    docker run -it --env="DISPLAY" --env="QT_X11_NO_MITSHM=1" --volume="/tmp/.X11-unix:/tmp/.X11-unix:rw" picknik/rviz_visual_tools:${ROS_DISTRO}
     export containerId=$(docker ps -l -q)
     # Close security hole:
     xhost -local:root
 
 (Optional) To build the docker image locally for this repo, run in base of package:
 
-    docker build -t davetcoleman/rviz_visual_tools:melodic .
+    docker build -t picknik/rviz_visual_tools:${ROS_DISTRO} .
 
 ## Contribute
 

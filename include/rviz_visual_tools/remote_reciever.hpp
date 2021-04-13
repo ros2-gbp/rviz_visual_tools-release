@@ -1,7 +1,7 @@
 /*********************************************************************
  * Software License Agreement (BSD License)
  *
- *  Copyright (c) 2012, Willow Garage, Inc.
+ *  Copyright (c) 2017, PickNik Consulting
  *  All rights reserved.
  *
  *  Redistribution and use in source and binary forms, with or without
@@ -14,7 +14,7 @@
  *     copyright notice, this list of conditions and the following
  *     disclaimer in the documentation and/or other materials provided
  *     with the distribution.
- *   * Neither the name of Willow Garage nor the names of its
+ *   * Neither the name of PickNik Consulting nor the names of its
  *     contributors may be used to endorse or promote products derived
  *     from this software without specific prior written permission.
  *
@@ -32,17 +32,65 @@
  *  POSSIBILITY OF SUCH DAMAGE.
  *********************************************************************/
 
+/* Author: Dave Coleman
+   Desc:   Object for wrapping remote control functionality
+*/
+
 #pragma once
 
-/** \def RVIZ_VISUAL_TOOLS_DEPRECATED
-    Macro that marks functions as deprecated */
+#include <rclcpp/rclcpp.hpp>
+#include <sensor_msgs/msg/joy.hpp>
 
-#ifdef __GNUC__
-#define RVIZ_VISUAL_TOOLS_DEPRECATED __attribute__((deprecated))
-#elif defined(_MSC_VER)
-#define RVIZ_VISUAL_TOOLS_DEPRECATED __declspec(deprecated)
-#elif defined(__clang__)
-#define RVIZ_VISUAL_TOOLS_DEPRECATED __attribute__((deprecated("Use of this method is deprecated")))
-#else
-#define RVIZ_VISUAL_TOOLS_DEPRECATED /* Nothing */
-#endif
+namespace rviz_visual_tools
+{
+class RemoteReciever : public rclcpp::Node
+{
+public:
+  RemoteReciever(const std::string& nodeName) : rclcpp::Node(nodeName)
+  {
+    joy_publisher_ =
+        this->create_publisher<sensor_msgs::msg::Joy>("/rviz_visual_tools_gui", rclcpp::QoS(100));
+  }
+
+  void publishNext()
+  {
+    RCLCPP_DEBUG(this->get_logger(), "Next");
+    sensor_msgs::msg::Joy msg;
+    msg.buttons.resize(9);
+    msg.buttons[1] = 1;
+    joy_publisher_->publish(msg);
+  }
+
+  void publishContinue()
+  {
+    RCLCPP_DEBUG(this->get_logger(), "Continue");
+    sensor_msgs::msg::Joy msg;
+    msg.buttons.resize(9);
+    msg.buttons[2] = 1;
+    joy_publisher_->publish(msg);
+  }
+
+  void publishBreak()
+  {
+    RCLCPP_DEBUG(this->get_logger(), "Break");
+    sensor_msgs::msg::Joy msg;
+    msg.buttons.resize(9);
+    msg.buttons[3] = 1;
+    joy_publisher_->publish(msg);
+  }
+
+  void publishStop()
+  {
+    RCLCPP_DEBUG(this->get_logger(), "Stop");
+    sensor_msgs::msg::Joy msg;
+    msg.buttons.resize(9);
+    msg.buttons[4] = 1;
+    joy_publisher_->publish(msg);
+  }
+
+protected:
+  // The ROS publishers
+  rclcpp::Publisher<sensor_msgs::msg::Joy>::SharedPtr joy_publisher_;
+};
+
+}  // end namespace rviz_visual_tools

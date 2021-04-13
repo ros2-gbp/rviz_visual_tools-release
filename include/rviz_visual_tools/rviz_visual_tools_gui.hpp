@@ -42,29 +42,29 @@
 #pragma once
 
 #ifndef Q_MOC_RUN
-#include <ros/ros.h>
+#include <rclcpp/rclcpp.hpp>
 
-#include <rviz/panel.h>
+#include <rviz_common/panel.hpp>
 #endif
 
 #include <QPushButton>
 #include <QComboBox>
 
-#include <rviz_visual_tools/remote_reciever.h>
+#include <rviz_visual_tools/remote_reciever.hpp>
 
 class QLineEdit;
 class QSpinBox;
 
 namespace rviz_visual_tools
 {
-class RvizVisualToolsGui : public rviz::Panel
+class RvizVisualToolsGui : public rviz_common::Panel
 {
   Q_OBJECT
 public:
   explicit RvizVisualToolsGui(QWidget* parent = nullptr);
 
-  void load(const rviz::Config& config) override;
-  void save(rviz::Config config) const override;
+  void load(const rviz_common::Config& config) override;
+  void save(rviz_common::Config config) const override;
 
 public Q_SLOTS:
 

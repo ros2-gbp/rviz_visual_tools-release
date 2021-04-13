@@ -31,18 +31,18 @@
 
 #ifndef Q_MOC_RUN  // See: https://bugreports.qt-project.org/browse/QTBUG-22829
 
-#include <rviz/tool.h>
-#include <rviz/default_plugin/tools/move_tool.h>
+#include <rviz_common/tool.hpp>
+#include <rviz_default_plugins/tools/move/move_tool.hpp>
 
 #include <QCursor>
 #include <QObject>
 #endif
 
-#include <rviz_visual_tools/remote_reciever.h>
+#include <rviz_visual_tools/remote_reciever.hpp>
 
 namespace rviz_visual_tools
 {
-class KeyTool : public rviz::Tool
+class KeyTool : public rviz_common::Tool
 {
   Q_OBJECT
 public:
@@ -54,13 +54,13 @@ public:
   void activate() override;
   void deactivate() override;
 
-  int processKeyEvent(QKeyEvent* event, rviz::RenderPanel* panel) override;
-  int processMouseEvent(rviz::ViewportMouseEvent& event) override;
+  int processKeyEvent(QKeyEvent* event, rviz_common::RenderPanel* panel) override;
+  int processMouseEvent(rviz_common::ViewportMouseEvent& event) override;
 
 public Q_SLOTS:
 
 protected:
-  rviz::MoveTool move_tool_;
+  rviz_default_plugins::tools::MoveTool move_tool_;
   RemoteReciever remote_reciever_;
 };
 }  // namespace rviz_visual_tools
