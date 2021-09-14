@@ -2,16 +2,18 @@
 Changelog for package rviz_visual_tools
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-4.0.1 (2021-09-14)
+4.1.0 (2021-09-14)
 ------------------
-* Remove executor namespace from rclcpp (`#190 <https://github.com/PickNikRobotics/rviz_visual_tools/issues/190>`_)
+* Fixes for new ros2 branch (`#198 <https://github.com/PickNikRobotics/rviz_visual_tools/issues/198>`_)
+* Fix include deprecation warning
+* Enable Galactic and Rolling CI (`#190 <https://github.com/PickNikRobotics/rviz_visual_tools/issues/190>`_)
+  * minor compile fixes
 * Fixes & improvements for deleting markers (`#188 <https://github.com/PickNikRobotics/rviz_visual_tools/issues/188>`_)
   * Added RvizVisualTools method to delete all markers in a namespace
   * Fixed deleteAllMarkers for all namespaces
   * Added getters for marker ID's
 * Move waitForSubscriber function to header file (`#185 <https://github.com/PickNikRobotics/rviz_visual_tools/issues/185>`_)
-* Create LICENSE (`#183 <https://github.com/PickNikRobotics/rviz_visual_tools/issues/183>`_)
-* Contributors: Jafar Abdi, Nathan Brooks, Vatan Aksoy Tezer, Wyatt Rees
+* Contributors: Henning Kayser, Jafar Abdi, Nathan Brooks, Vatan Aksoy Tezer, Wyatt Rees
 
 4.0.0 (2021-04-09)
 ------------------
