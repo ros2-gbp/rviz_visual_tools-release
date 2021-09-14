@@ -1,36 +1,30 @@
-/*********************************************************************
- * Software License Agreement (BSD License)
- *
- *  Copyright (c) 2017, PickNik Consulting
- *  All rights reserved.
- *
- *  Redistribution and use in source and binary forms, with or without
- *  modification, are permitted provided that the following conditions
- *  are met:
- *
- *   * Redistributions of source code must retain the above copyright
- *     notice, this list of conditions and the following disclaimer.
- *   * Redistributions in binary form must reproduce the above
- *     copyright notice, this list of conditions and the following
- *     disclaimer in the documentation and/or other materials provided
- *     with the distribution.
- *   * Neither the name of the Univ of CO, Boulder nor the names of its
- *     contributors may be used to endorse or promote products derived
- *     from this software without specific prior written permission.
- *
- *  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
- *  "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
- *  LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS
- *  FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
- *  COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,
- *  INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING,
- *  BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
- *  LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
- *  CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
- *  LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN
- *  ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
- *  POSSIBILITY OF SUCH DAMAGE.
- *********************************************************************/
+// Copyright 2021 PickNik Inc.
+//
+// Redistribution and use in source and binary forms, with or without
+// modification, are permitted provided that the following conditions are met:
+//
+//    * Redistributions of source code must retain the above copyright
+//      notice, this list of conditions and the following disclaimer.
+//
+//    * Redistributions in binary form must reproduce the above copyright
+//      notice, this list of conditions and the following disclaimer in the
+//      documentation and/or other materials provided with the distribution.
+//
+//    * Neither the name of the PickNik Inc. nor the names of its
+//      contributors may be used to endorse or promote products derived from
+//      this software without specific prior written permission.
+//
+// THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+// AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+// IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+// ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE
+// LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+// CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+// SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+// INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+// CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+// ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+// POSSIBILITY OF SUCH DAMAGE.
 
 /* Author: Dave Coleman <dave@picknik.ai>, Andy McEvoy
    Desc:   Helper functions for displaying basic shape markers in Rviz
@@ -115,6 +109,14 @@ bool RvizVisualTools::deleteAllMarkers()
   return publishMarker(reset_marker_);
 }
 
+bool RvizVisualTools::deleteAllMarkers(const std::string& ns)
+{
+  visualization_msgs::msg::Marker delete_ns_marker = reset_marker_;
+  delete_ns_marker.header.stamp = builtin_interfaces::msg::Time();
+  delete_ns_marker.ns = ns;
+  return publishMarker(delete_ns_marker);
+}
+
 void RvizVisualTools::resetMarkerCounts()
 {
   arrow_marker_.id = 0;
@@ -135,7 +137,8 @@ bool RvizVisualTools::loadRvizMarkers()
   // Load reset marker -------------------------------------------------
   reset_marker_.header.frame_id = base_frame_;
   reset_marker_.header.stamp = builtin_interfaces::msg::Time();
-  reset_marker_.ns = "deleteAllMarkers";  // helps during debugging
+  reset_marker_.ns =
+      "";  // needs to be empty in order for rviz to delete all markers in all namespaces
   reset_marker_.action = visualization_msgs::msg::Marker::DELETEALL;
   reset_marker_.pose.orientation.w = 1;
 
@@ -331,62 +334,6 @@ void RvizVisualTools::loadMarkerPub(bool wait_for_subscriber)
 bool RvizVisualTools::waitForMarkerSub(double wait_time)
 {
   return waitForSubscriber(pub_rviz_markers_, wait_time);
-}
-
-template <class PublisherPtr>
-bool RvizVisualTools::waitForSubscriber(const PublisherPtr& pub, double wait_time)
-{
-  // Will wait at most this amount of time
-  rclcpp::Time max_time(clock_interface_->get_clock()->now() +
-                        rclcpp::Duration::from_seconds(wait_time));
-
-  // This is wrong. It returns only the number of subscribers that have already
-  // established their direct connections to this publisher
-
-  // How often to check for subscribers
-  rclcpp::Duration loop_duration = rclcpp::Duration::from_seconds(1.0 / 200.0);
-  if (!pub)
-  {
-    RCLCPP_ERROR(logger_,
-                 "loadMarkerPub() has not been called yet, unable to wait for subscriber.");
-  }
-
-  std::string topic_name = pub->get_topic_name();
-  int num_existing_subscribers = graph_interface_->count_subscribers(topic_name);
-  if (wait_time > 0 && num_existing_subscribers == 0)
-  {
-    RCLCPP_INFO(logger_, "Topic '%s' waiting %f seconds for subscriber, ", pub->get_topic_name(),
-                wait_time);
-  }
-
-  // Wait for subscriber
-  while (wait_time > 0 && num_existing_subscribers == 0 && rclcpp::ok())
-  {
-    if (clock_interface_->get_clock()->now() > max_time)  // Check if timed out
-    {
-      RCLCPP_WARN(logger_,
-                  "Topic '%s' unable to connect to any subscribers within %f sec. It is "
-                  "possible initially published visual messages will be lost.",
-                  pub->get_topic_name(), wait_time);
-      pub_rviz_markers_connected_ = false;
-      return pub_rviz_markers_connected_;
-    }
-
-    // Check again
-    num_existing_subscribers = graph_interface_->count_subscribers(topic_name);
-
-    // Sleep
-    rclcpp::sleep_for(std::chrono::nanoseconds(loop_duration.nanoseconds()));
-  }
-
-  if (!rclcpp::ok())
-  {
-    pub_rviz_markers_connected_ = false;
-    return false;
-  }
-
-  pub_rviz_markers_connected_ = (num_existing_subscribers != 0);
-  return pub_rviz_markers_connected_;
 }
 
 void RvizVisualTools::setLifetime(double lifetime)
@@ -3043,6 +2990,61 @@ void RvizVisualTools::setRemoteControl(const RemoteControlPtr& remote_control)
                 "Overwriting existing remote_control_. there should be no reason to do that");
   }
   remote_control_ = remote_control;
+}
+
+int32_t RvizVisualTools::getArrowId() const
+{
+  return arrow_marker_.id;
+}
+
+int32_t RvizVisualTools::getSphereId() const
+{
+  return sphere_marker_.id;
+}
+
+int32_t RvizVisualTools::getBlockId() const
+{
+  return block_marker_.id;
+}
+
+int32_t RvizVisualTools::getCylinderId() const
+{
+  return cylinder_marker_.id;
+}
+
+int32_t RvizVisualTools::getMeshId() const
+{
+  return mesh_marker_.id;
+}
+
+int32_t RvizVisualTools::getTextId() const
+{
+  return text_marker_.id;
+}
+
+int32_t RvizVisualTools::getCuboidId() const
+{
+  return cuboid_marker_.id;
+}
+
+int32_t RvizVisualTools::getLineStripId() const
+{
+  return line_strip_marker_.id;
+}
+
+int32_t RvizVisualTools::getLineListId() const
+{
+  return line_list_marker_.id;
+}
+
+int32_t RvizVisualTools::getSpheresId() const
+{
+  return spheres_marker_.id;
+}
+
+int32_t RvizVisualTools::getTriangleId() const
+{
+  return triangle_marker_.id;
 }
 
 }  // namespace rviz_visual_tools
