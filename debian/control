@@ -1,0 +1,12 @@
+Source: ros-galactic-rviz-visual-tools
+Section: misc
+Priority: optional
+Maintainer: Mike Lautman <mike@picknik.ai>
+Build-Depends: debhelper (>= 9.0.0), libeigen3-dev, libqt5x11extras5-dev, qtbase5-dev, ros-galactic-ament-cmake, ros-galactic-ament-cmake-gtest, ros-galactic-ament-lint-auto, ros-galactic-ament-lint-common, ros-galactic-eigen-stl-containers, ros-galactic-eigen3-cmake-module, ros-galactic-geometry-msgs, ros-galactic-interactive-markers, ros-galactic-rclcpp, ros-galactic-rclcpp-components, ros-galactic-rviz-ogre-vendor, ros-galactic-sensor-msgs, ros-galactic-shape-msgs, ros-galactic-std-msgs, ros-galactic-tf2, ros-galactic-tf2-eigen, ros-galactic-tf2-geometry-msgs, ros-galactic-trajectory-msgs, ros-galactic-visualization-msgs, ros-galactic-ros-workspace
+Homepage: https://github.com/PickNikRobotics/rviz_visual_tools
+Standards-Version: 3.9.2
+
+Package: ros-galactic-rviz-visual-tools
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}, libeigen3-dev, libqt5widgets5, libqt5x11extras5-dev, ros-galactic-ament-index-python, ros-galactic-eigen-stl-containers, ros-galactic-eigen3-cmake-module, ros-galactic-geometry-msgs, ros-galactic-interactive-markers, ros-galactic-launch, ros-galactic-launch-ros, ros-galactic-rclcpp, ros-galactic-rclcpp-components, ros-galactic-rviz-ogre-vendor, ros-galactic-rviz2, ros-galactic-sensor-msgs, ros-galactic-shape-msgs, ros-galactic-std-msgs, ros-galactic-tf2, ros-galactic-tf2-eigen, ros-galactic-tf2-geometry-msgs, ros-galactic-trajectory-msgs, ros-galactic-visualization-msgs, ros-galactic-ros-workspace
+Description: Utility functions for displaying and debugging data in Rviz via published markers
