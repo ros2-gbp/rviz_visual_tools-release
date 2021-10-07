@@ -2,6 +2,17 @@
 Changelog for package rviz_visual_tools
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+4.0.2 (2021-10-07)
+------------------
+* Re-enable RemoteControl functionality (`#204 <https://github.com/PickNikRobotics/rviz_visual_tools/issues/204>`_)
+  * use condition_variable to be more thread safe
+  * Drop executor from constructor, deprecate old one
+  * Fix RemoteControl usage in demo
+  * Use SystemDefaultsQOS for RemoteControl subscriber
+  * Add RvizVisualToolsGui dashboard to rviz config, correct view
+* Rename node_executable to executable (`#201 <https://github.com/PickNikRobotics/rviz_visual_tools/issues/201>`_)
+* Contributors: Jafar Abdi, Davide Faconti, Henning Kayser, Vatan Aksoy Tezer
+
 4.0.1 (2021-09-14)
 ------------------
 * Remove executor namespace from rclcpp (`#190 <https://github.com/PickNikRobotics/rviz_visual_tools/issues/190>`_)
