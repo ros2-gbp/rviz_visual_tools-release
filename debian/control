@@ -1,0 +1,12 @@
+Source: ros-foxy-rviz-visual-tools
+Section: misc
+Priority: optional
+Maintainer: Mike Lautman <mike@picknik.ai>
+Build-Depends: debhelper (>= 9.0.0), libeigen3-dev, libqt5x11extras5-dev, qtbase5-dev, ros-foxy-ament-cmake, ros-foxy-ament-cmake-gtest, ros-foxy-ament-lint-auto, ros-foxy-ament-lint-common, ros-foxy-eigen-stl-containers, ros-foxy-eigen3-cmake-module, ros-foxy-geometry-msgs, ros-foxy-interactive-markers, ros-foxy-rclcpp, ros-foxy-rclcpp-components, ros-foxy-rviz-ogre-vendor, ros-foxy-sensor-msgs, ros-foxy-shape-msgs, ros-foxy-std-msgs, ros-foxy-tf2, ros-foxy-tf2-eigen, ros-foxy-tf2-geometry-msgs, ros-foxy-trajectory-msgs, ros-foxy-visualization-msgs, ros-foxy-ros-workspace
+Homepage: https://github.com/PickNikRobotics/rviz_visual_tools
+Standards-Version: 3.9.2
+
+Package: ros-foxy-rviz-visual-tools
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}, libeigen3-dev, libqt5widgets5, libqt5x11extras5-dev, ros-foxy-ament-index-python, ros-foxy-eigen-stl-containers, ros-foxy-eigen3-cmake-module, ros-foxy-geometry-msgs, ros-foxy-interactive-markers, ros-foxy-launch, ros-foxy-launch-ros, ros-foxy-rclcpp, ros-foxy-rclcpp-components, ros-foxy-rviz-ogre-vendor, ros-foxy-rviz2, ros-foxy-sensor-msgs, ros-foxy-shape-msgs, ros-foxy-std-msgs, ros-foxy-tf2, ros-foxy-tf2-eigen, ros-foxy-tf2-geometry-msgs, ros-foxy-trajectory-msgs, ros-foxy-visualization-msgs, ros-foxy-ros-workspace
+Description: Utility functions for displaying and debugging data in Rviz via published markers
