@@ -1,3 +1,26 @@
+## rviz_visual_tools (foxy) - 4.0.2-2
+
+The packages in the `rviz_visual_tools` repository were released into the `foxy` distro by running `/home/jafar/.local/bin/bloom-release rviz_visual_tools -t foxy -r foxy` on `Thu, 07 Oct 2021 19:07:24 -0000`
+
+The `rviz_visual_tools` package was released.
+
+Version of package(s) in repository `rviz_visual_tools`:
+
+- upstream repository: https://github.com/PickNikRobotics/rviz_visual_tools.git
+- release repository: https://github.com/PickNikRobotics/rviz_visual_tools-release.git
+- rosdistro version: `4.0.1-1`
+- old version: `4.0.2-1`
+- new version: `4.0.2-2`
+
+Versions of tools used:
+
+- bloom version: `0.10.7`
+- catkin_pkg version: `0.4.23`
+- rosdep version: `0.21.0`
+- rosdistro version: `0.8.3`
+- vcstools version: `0.1.42`
+
+
 ## rviz_visual_tools (foxy) - 4.0.2-1
 
 The packages in the `rviz_visual_tools` repository were released into the `foxy` distro by running `/home/jafar/.local/bin/bloom-release rviz_visual_tools -t foxy -r foxy` on `Thu, 07 Oct 2021 18:45:40 -0000`
