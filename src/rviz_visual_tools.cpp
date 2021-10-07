@@ -45,13 +45,8 @@
 #include <tf2/convert.h>
 #include <tf2/LinearMath/Vector3.h>
 #include <tf2/LinearMath/Quaternion.h>
-#if __has_include(<tf2_eigen/tf2_eigen.hpp>)
-#include <tf2_eigen/tf2_eigen.hpp>
-#include <tf2_geometry_msgs/tf2_geometry_msgs.hpp>
-#else
 #include <tf2_eigen/tf2_eigen.h>
 #include <tf2_geometry_msgs/tf2_geometry_msgs.h>
-#endif
 
 // Use (void) to silent unused warnings.
 #define assertm(exp, msg) assert(((void)msg, exp))
@@ -2984,6 +2979,10 @@ bool RvizVisualTools::prompt(const std::string& msg)
 
 RemoteControlPtr& RvizVisualTools::getRemoteControl()
 {
+  if (!remote_control_)
+  {
+    loadRemoteControl();
+  }
   return remote_control_;
 }
 
@@ -2995,6 +2994,16 @@ void RvizVisualTools::setRemoteControl(const RemoteControlPtr& remote_control)
                 "Overwriting existing remote_control_. there should be no reason to do that");
   }
   remote_control_ = remote_control;
+}
+
+void RvizVisualTools::loadRemoteControl()
+{
+  // Load remote control
+  if (!remote_control_)
+  {
+    remote_control_ = std::make_shared<RemoteControl>(node_base_interface_, topics_interface_,
+                                                      logging_interface_);
+  }
 }
 
 int32_t RvizVisualTools::getArrowId() const
