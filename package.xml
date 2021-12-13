@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <package format="3">
   <name>rviz_visual_tools</name>
-  <version>4.1.1</version>
+  <version>4.1.2</version>
   <description>Utility functions for displaying and debugging data in Rviz via published markers</description>
 
   <maintainer email="mike@picknik.ai">Mike Lautman</maintainer>
@@ -21,7 +21,10 @@
 
   <depend>rclcpp</depend>
   <depend>rclcpp_components</depend>
+  <depend>rviz_common</depend>
   <depend>rviz_ogre_vendor</depend>
+  <depend>rviz_rendering</depend>
+  <depend>rviz_default_plugins</depend>
   <depend>pluginlib</depend>
   <depend>tf2</depend>
   <depend>tf2_eigen</depend>
