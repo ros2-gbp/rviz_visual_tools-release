@@ -2,31 +2,34 @@
 Changelog for package rviz_visual_tools
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-4.1.1 (2021-10-07)
+4.0.3 (2021-12-13)
 ------------------
-* Re-enable RemoteControl functionality (`#205 <https://github.com/PickNikRobotics/rviz_visual_tools/issues/205>`_)
+* Make sure to add all dependencies to the package.xml (`#209 <https://github.com/PickNikRobotics/rviz_visual_tools/issues/209>`_) (`#214 <https://github.com/PickNikRobotics/rviz_visual_tools/issues/214>`_)
+* Backport Fix faulty templated constructor (`#213 <https://github.com/PickNikRobotics/rviz_visual_tools/issues/213>`_)
+* Contributors: Vatan Aksoy Tezer, Chris Lalancette
+
+4.0.2 (2021-10-07)
+------------------
+* Add pluginlib dependency. (`#203 <https://github.com/PickNikRobotics/rviz_visual_tools/issues/203>`_)
+* Re-enable RemoteControl functionality (`#204 <https://github.com/PickNikRobotics/rviz_visual_tools/issues/204>`_)
   * use condition_variable to be more thread safe
   * Drop executor from constructor, deprecate old one
   * Fix RemoteControl usage in demo
   * Use SystemDefaultsQOS for RemoteControl subscriber
   * Add RvizVisualToolsGui dashboard to rviz config, correct view
-* Add pluginlib dependency. (`#203 <https://github.com/PickNikRobotics/rviz_visual_tools/issues/203>`_)
-* Fix package dependencies and cmake export (`#202 <https://github.com/PickNikRobotics/rviz_visual_tools/issues/202>`_)
-* Rename node_executable to executable (`#200 <https://github.com/PickNikRobotics/rviz_visual_tools/issues/200>`_)
+* Rename node_executable to executable (`#201 <https://github.com/PickNikRobotics/rviz_visual_tools/issues/201>`_)
 * Contributors: Davide Faconti, Henning Kayser, Jafar Abdi, Steven! Ragnarök, Vatan Aksoy Tezer
 
-4.1.0 (2021-09-14)
+4.0.1 (2021-09-14)
 ------------------
-* Fixes for new ros2 branch (`#198 <https://github.com/PickNikRobotics/rviz_visual_tools/issues/198>`_)
-* Fix include deprecation warning
-* Enable Galactic and Rolling CI (`#190 <https://github.com/PickNikRobotics/rviz_visual_tools/issues/190>`_)
-  * minor compile fixes
+* Remove executor namespace from rclcpp (`#190 <https://github.com/PickNikRobotics/rviz_visual_tools/issues/190>`_)
 * Fixes & improvements for deleting markers (`#188 <https://github.com/PickNikRobotics/rviz_visual_tools/issues/188>`_)
   * Added RvizVisualTools method to delete all markers in a namespace
   * Fixed deleteAllMarkers for all namespaces
   * Added getters for marker ID's
 * Move waitForSubscriber function to header file (`#185 <https://github.com/PickNikRobotics/rviz_visual_tools/issues/185>`_)
-* Contributors: Henning Kayser, Jafar Abdi, Nathan Brooks, Vatan Aksoy Tezer, Wyatt Rees
+* Create LICENSE (`#183 <https://github.com/PickNikRobotics/rviz_visual_tools/issues/183>`_)
+* Contributors: Jafar Abdi, Nathan Brooks, Vatan Aksoy Tezer, Wyatt Rees
 
 4.0.0 (2021-04-09)
 ------------------

@@ -61,8 +61,6 @@ if(NOT DEFINED BUILD_SHARED_LIBS)
   option(BUILD_SHARED_LIBS "Build dynamically-linked binaries" ON)
 endif()
 
-include_directories(include)
-
 # Rviz GUI library
  set(SOURCE_FILES
    src/${PROJECT_NAME}_gui.cpp
@@ -77,15 +75,20 @@ set(HEADER_FILES
     )
 
 add_library(${PROJECT_NAME}_gui SHARED ${SOURCE_FILES} ${HEADER_FILES})
-ament_target_dependencies(${PROJECT_NAME}_gui PUBLIC
-  rclcpp
-  rviz_common
-  rviz_rendering
-  rviz_default_plugins
-  rviz_ogre_vendor
+ament_target_dependencies(${PROJECT_NAME}_gui
+        rclcpp
+        rviz_common
+        rviz_rendering
+        rviz_default_plugins
+        )
+target_include_directories(${PROJECT_NAME}_gui PUBLIC
+   include
+   ${OGRE_INCLUDE_DIRS}
+   ${rviz_rendering_INCLUDE_DIRS}
+   ${rviz_common_INCLUDE_DIRS}
+   ${rviz_default_plugins_INCLUDE_DIRS}
 )
-target_link_libraries(${PROJECT_NAME}_gui PUBLIC Qt5::Widgets)
-
+target_link_libraries(${PROJECT_NAME}_gui Qt5::Widgets)
 # prevent pluginlib from using boost
 target_compile_definitions(${PROJECT_NAME}_gui PUBLIC "PLUGINLIB__DISABLE_BOOST_FUNCTIONS")
 ## Causes the visibility macros to use dllexport rather than dllimport (for Windows, when your plugin should be used as library)
@@ -97,7 +100,10 @@ add_library(${PROJECT_NAME}_remote_control SHARED
 )
 # Needed for M_PI on Windows
 target_compile_definitions(${PROJECT_NAME}_remote_control PRIVATE _USE_MATH_DEFINES)
-
+target_include_directories(${PROJECT_NAME}_remote_control
+  PUBLIC
+    include
+)
 ament_target_dependencies(${PROJECT_NAME}_remote_control
   rclcpp
   rclcpp_components
@@ -118,7 +124,11 @@ add_library(${PROJECT_NAME} SHARED
   src/tf_visual_tools.cpp
 )
 target_compile_definitions(${PROJECT_NAME} PRIVATE _USE_MATH_DEFINES)
-ament_target_dependencies(${PROJECT_NAME} PUBLIC Eigen3)
+target_include_directories(${PROJECT_NAME}
+  PUBLIC
+    include
+    ${Eigen3_INCLUDE_DIRS}
+)
 target_link_libraries(${PROJECT_NAME}
   ${PROJECT_NAME}_remote_control
 )
@@ -137,10 +147,15 @@ ament_target_dependencies(${PROJECT_NAME}
 )
 
 # Library
-add_library(${PROJECT_NAME}_imarker_simple SHARED
+add_library(${PROJECT_NAME}_imarker_simple
   src/imarker_simple.cpp
 )
 target_compile_definitions(${PROJECT_NAME}_imarker_simple PRIVATE _USE_MATH_DEFINES)
+target_include_directories(${PROJECT_NAME}_imarker_simple
+  PUBLIC
+    include
+    ${Eigen3_INCLUDE_DIRS}
+)
 target_link_libraries(${PROJECT_NAME}_imarker_simple
   ${PROJECT_NAME}
 )
@@ -151,7 +166,6 @@ ament_target_dependencies(${PROJECT_NAME}_imarker_simple
   visualization_msgs
   sensor_msgs
   eigen_stl_containers
-  Eigen3
 )
 
 # Demo executable
@@ -190,11 +204,12 @@ install(
     ${PROJECT_NAME}_gui
     ${PROJECT_NAME}_imarker_simple
   EXPORT
-    export_${PROJECT_NAME}
+    ${PROJECT_NAME}
+    #${PROJECT_NAME}_gui
+    # ${PROJECT_NAME}_imarker_simple
   ARCHIVE DESTINATION lib
   LIBRARY DESTINATION lib
   RUNTIME DESTINATION bin
-  INCLUDES DESTINATION include
 )
 
 # Install executables
@@ -208,12 +223,13 @@ install(
 )
 
 # Install header files
-install(DIRECTORY include/ DESTINATION include)
+install(
+  DIRECTORY include/
+  DESTINATION include)
 
 # Install shared resources
 install(DIRECTORY launch    DESTINATION share/${PROJECT_NAME})
 
-ament_export_targets(export_${PROJECT_NAME} HAS_LIBRARY_TARGET)
 ament_export_dependencies(geometry_msgs
   shape_msgs
   rclcpp
@@ -228,7 +244,6 @@ ament_export_dependencies(geometry_msgs
   rviz_common
   rviz_rendering
   rviz_default_plugins
-  rviz_ogre_vendor
 )
 ament_export_include_directories(include)
 ament_export_libraries(
