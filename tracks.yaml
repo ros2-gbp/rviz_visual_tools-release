@@ -70,7 +70,7 @@ tracks:
     last_version: 4.1.2
     name: rviz_visual_tools
     patches: null
-    release_inc: '2'
+    release_inc: '3'
     release_repo_url: null
     release_tag: :{version}
     ros_distro: humble
