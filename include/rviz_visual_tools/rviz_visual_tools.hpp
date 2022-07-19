@@ -256,7 +256,7 @@ public:
    * \param wait_for_subscriber - whether a sleep for loop should be used to check for connectivity
    * to an external subscriber before proceeding
    */
-  void loadMarkerPub(bool wait_for_subscriber = false);
+  void loadMarkerPub(bool wait_for_subscriber = true);
 
   /** \brief Optional blocking function to call *after* calling loadMarkerPub(). Allows you to do
    *         some intermediate processing before wasting cycles waiting for the marker pub to find a
@@ -282,6 +282,11 @@ public:
   template <typename MessageT>
   bool waitForSubscriber(std::shared_ptr<rclcpp::Publisher<MessageT> >& pub, double wait_time = 5.0)
   {
+    // if the user does not want to wait return no connection
+    if (!wait_for_subscriber_)
+    {
+      return false;
+    }
     // Will wait at most this amount of time
     rclcpp::Time max_time(clock_interface_->get_clock()->now() +
                           rclcpp::Duration::from_seconds(wait_time));
@@ -299,7 +304,7 @@ public:
     if (wait_time > 0 && num_existing_subscribers == 0)
     {
       RCLCPP_INFO_STREAM(logger_, "Topic " << pub->get_topic_name() << " waiting " << wait_time
-                                           << " seconds for subscriber, ");
+                                           << " seconds for subscriber.");
     }
     // Wait for subscriber
     while (wait_time > 0 && num_existing_subscribers == 0 && rclcpp::ok())
@@ -513,6 +518,20 @@ public:
                         Colors color = TRANSLUCENT, double x_width = 1.0, double y_width = 1.0);
 
   /**
+   * \brief Display a plane given a vector normal to the plane and the distance to the plane along
+   *        that normal. The plane normal does not need to be given as a unit vector.
+   * \param normal - a vector representing the normal of the plane
+   * \param d - the distance to the plane along the vector
+   * \param color - the color of the plane
+   * \param x_width - X-size of the vizualized plane [meters]
+   * \param y_width - Y-size of the visualized plane [meters]
+   * \return true on success
+   */
+  bool publishNormalAndDistancePlane(const Eigen::Vector3d& normal, const double d,
+                                     const Colors color = TRANSLUCENT, const double x_width = 1.0,
+                                     const double y_width = 1.0);
+
+  /**
    * \brief Display the XY plane of a given pose
    * \param pose - the position of the plane
    * \param color - the color of the plane
@@ -525,7 +544,7 @@ public:
                       double scale = 1.0);
 
   /**
-   * \brief Display the XY plane of a given pose
+   * \brief Display the XZ plane of a given pose
    * \param pose - the position of the plane
    * \param color - the color of the plane
    * \param scale - the size of the vizualized plane
@@ -537,7 +556,7 @@ public:
                       double scale = 1.0);
 
   /**
-   * \brief Display the XY plane of a given pose
+   * \brief Display the YZ plane of a given pose
    * \param pose - the position of the plane
    * \param color - the color of the plane
    * \param scale - the size of the vizualized plane
@@ -1274,6 +1293,7 @@ protected:
                           // markers
   bool pub_rviz_markers_connected_ = false;
   bool pub_rviz_markers_waited_ = false;
+  bool wait_for_subscriber_ = false;
 
   // Strings
   std::string marker_topic_;  // topic to publish to rviz
