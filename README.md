@@ -1,3 +1,26 @@
+## rviz_visual_tools (rolling) - 4.1.3-1
+
+The packages in the `rviz_visual_tools` repository were released into the `rolling` distro by running `/usr/bin/bloom-release --rosdistro rolling --track rolling rviz_visual_tools` on `Tue, 19 Jul 2022 13:52:12 -0000`
+
+The `rviz_visual_tools` package was released.
+
+Version of package(s) in repository `rviz_visual_tools`:
+
+- upstream repository: https://github.com/PickNikRobotics/rviz_visual_tools.git
+- release repository: https://github.com/ros2-gbp/rviz_visual_tools-release.git
+- rosdistro version: `4.1.2-2`
+- old version: `4.1.2-2`
+- new version: `4.1.3-1`
+
+Versions of tools used:
+
+- bloom version: `0.11.2`
+- catkin_pkg version: `0.5.2`
+- rosdep version: `0.22.1`
+- rosdistro version: `0.9.0`
+- vcstools version: `0.1.42`
+
+
 ## rviz_visual_tools (rolling) - 4.1.2-1
 
 The packages in the `rviz_visual_tools` repository were released into the `rolling` distro by running `/home/jafar/.local/bin/bloom-release rviz_visual_tools -t rolling -r rolling` on `Mon, 13 Dec 2021 06:59:57 -0000`
