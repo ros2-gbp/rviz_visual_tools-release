@@ -320,6 +320,8 @@ void RvizVisualTools::loadMarkerPub(bool wait_for_subscriber)
   {
     return;
   }
+  // remember that the user does not want to wait
+  wait_for_subscriber_ = wait_for_subscriber;
 
   // Rviz marker publisher
   const rclcpp::QoS feedback_pub_qos = rclcpp::QoS(10);
@@ -1034,6 +1036,15 @@ bool RvizVisualTools::publishABCDPlane(const double A, const double B, const dou
   publishCuboid(pose, x_width, y_width, height, color);
 
   return true;
+}
+
+bool RvizVisualTools::publishNormalAndDistancePlane(const Eigen::Vector3d& normal, const double d,
+                                                    const Colors color, const double x_width,
+                                                    const double y_width)
+{
+  // Scale distance for ABCD plane
+  const auto D = -d * normal.norm();
+  return publishABCDPlane(normal(0), normal(1), normal(2), D);
 }
 
 bool RvizVisualTools::publishXYPlane(const Eigen::Isometry3d& pose, Colors color, double scale)
