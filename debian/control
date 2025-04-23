@@ -1,0 +1,12 @@
+Source: ros-kilted-rviz-visual-tools
+Section: misc
+Priority: optional
+Maintainer: Mike Lautman <mike@picknik.ai>
+Build-Depends: debhelper (>= 9.0.0), libeigen3-dev, qtbase5-dev, ros-kilted-ament-cmake, ros-kilted-ament-cmake-gtest <!nocheck>, ros-kilted-ament-lint-auto <!nocheck>, ros-kilted-ament-lint-common <!nocheck>, ros-kilted-eigen-stl-containers, ros-kilted-eigen3-cmake-module, ros-kilted-geometry-msgs, ros-kilted-interactive-markers, ros-kilted-pluginlib, ros-kilted-rclcpp, ros-kilted-rclcpp-components, ros-kilted-rviz-common, ros-kilted-rviz-default-plugins, ros-kilted-rviz-ogre-vendor, ros-kilted-rviz-rendering, ros-kilted-sensor-msgs, ros-kilted-shape-msgs, ros-kilted-std-msgs, ros-kilted-tf2, ros-kilted-tf2-eigen, ros-kilted-tf2-geometry-msgs, ros-kilted-trajectory-msgs, ros-kilted-visualization-msgs, ros-kilted-ros-workspace
+Homepage: https://github.com/PickNikRobotics/rviz_visual_tools
+Standards-Version: 3.9.2
+
+Package: ros-kilted-rviz-visual-tools
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}, libeigen3-dev, libqt5widgets5, ros-kilted-ament-index-python, ros-kilted-eigen-stl-containers, ros-kilted-eigen3-cmake-module, ros-kilted-geometry-msgs, ros-kilted-interactive-markers, ros-kilted-launch, ros-kilted-launch-ros, ros-kilted-pluginlib, ros-kilted-rclcpp, ros-kilted-rclcpp-components, ros-kilted-rviz-common, ros-kilted-rviz-default-plugins, ros-kilted-rviz-ogre-vendor, ros-kilted-rviz-rendering, ros-kilted-rviz2, ros-kilted-sensor-msgs, ros-kilted-shape-msgs, ros-kilted-std-msgs, ros-kilted-tf2, ros-kilted-tf2-eigen, ros-kilted-tf2-geometry-msgs, ros-kilted-trajectory-msgs, ros-kilted-visualization-msgs, ros-kilted-ros-workspace
+Description: Utility functions for displaying and debugging data in Rviz via published markers
