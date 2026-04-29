@@ -278,8 +278,7 @@ tracks:
     ros_distro: lyrical
     vcs_type: git
     vcs_uri: https://github.com/PickNikRobotics/rviz_visual_tools.git
-    version: 4.1.4
-    version_saved: :{auto}
+    version: :{auto}
   melodic:
     actions:
     - bloom-export-upstream :{vcs_local_uri} :{vcs_type} --tag :{release_tag} --display-uri
