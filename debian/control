@@ -1,0 +1,12 @@
+Source: ros-lyrical-rviz-visual-tools
+Section: misc
+Priority: optional
+Maintainer: Mike Lautman <mike@picknik.ai>
+Build-Depends: debhelper (>= 9.0.0), libeigen3-dev, qtbase5-dev, ros-lyrical-ament-cmake, ros-lyrical-ament-cmake-gtest <!nocheck>, ros-lyrical-ament-lint-auto <!nocheck>, ros-lyrical-ament-lint-common <!nocheck>, ros-lyrical-eigen-stl-containers, ros-lyrical-eigen3-cmake-module, ros-lyrical-geometry-msgs, ros-lyrical-interactive-markers, ros-lyrical-pluginlib, ros-lyrical-rclcpp, ros-lyrical-rclcpp-components, ros-lyrical-rviz-common, ros-lyrical-rviz-default-plugins, ros-lyrical-rviz-ogre-vendor, ros-lyrical-rviz-rendering, ros-lyrical-sensor-msgs, ros-lyrical-shape-msgs, ros-lyrical-std-msgs, ros-lyrical-tf2, ros-lyrical-tf2-eigen, ros-lyrical-tf2-geometry-msgs, ros-lyrical-trajectory-msgs, ros-lyrical-visualization-msgs, ros-lyrical-ros-workspace
+Homepage: https://github.com/PickNikRobotics/rviz_visual_tools
+Standards-Version: 3.9.2
+
+Package: ros-lyrical-rviz-visual-tools
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}, libeigen3-dev, libqt5widgets5t64, ros-lyrical-ament-index-python, ros-lyrical-eigen-stl-containers, ros-lyrical-eigen3-cmake-module, ros-lyrical-geometry-msgs, ros-lyrical-interactive-markers, ros-lyrical-launch, ros-lyrical-launch-ros, ros-lyrical-pluginlib, ros-lyrical-rclcpp, ros-lyrical-rclcpp-components, ros-lyrical-rviz-common, ros-lyrical-rviz-default-plugins, ros-lyrical-rviz-ogre-vendor, ros-lyrical-rviz-rendering, ros-lyrical-rviz2, ros-lyrical-sensor-msgs, ros-lyrical-shape-msgs, ros-lyrical-std-msgs, ros-lyrical-tf2, ros-lyrical-tf2-eigen, ros-lyrical-tf2-geometry-msgs, ros-lyrical-trajectory-msgs, ros-lyrical-visualization-msgs, ros-lyrical-ros-workspace
+Description: Utility functions for displaying and debugging data in Rviz via published markers
