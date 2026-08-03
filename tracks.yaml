@@ -69,7 +69,7 @@ tracks:
     - git-bloom-generate -y rosdynrpm --prefix release/:{ros_distro} :{ros_distro}
       -i :{release_inc} --require-os fedora rhel
     devel_branch: ros2
-    last_version: 4.1.4
+    last_version: 4.2.0
     name: rviz_visual_tools
     patches: null
     release_inc: '1'
