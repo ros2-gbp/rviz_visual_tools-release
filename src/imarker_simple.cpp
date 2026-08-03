@@ -49,8 +49,8 @@ IMarkerSimple::IMarkerSimple(
     const rclcpp::node_interfaces::NodeTopicsInterface::SharedPtr& topics_interface,
     const rclcpp::node_interfaces::NodeServicesInterface::SharedPtr& services_interface,
     const std::string& imarker_topic_name, double scale,
-    const geometry_msgs::msg::Pose& initial_pose, const rclcpp::QoS& update_pub_qos,
-    const rclcpp::QoS& feedback_sub_qos)
+    const geometry_msgs::msg::Pose& initial_pose, const std::string& parent_frame,
+    const rclcpp::QoS& update_pub_qos, const rclcpp::QoS& feedback_sub_qos)
   : node_base_interface_(node_base_interface)
   , clock_interface_(clock_interface)
   , logging_interface_(logging_interface)
@@ -68,10 +68,8 @@ IMarkerSimple::IMarkerSimple(
       imarker_topic, node_base_interface_, clock_interface_, logging_interface_, topics_interface_,
       services_interface_, update_pub_qos, feedback_sub_qos);
 
-  // ros::Duration(2.0).sleep();
-
   // Create imarker
-  make6DofMarker(latest_pose_, scale);
+  make6DofMarker(latest_pose_, scale, parent_frame);
 
   // Send imarker to Rviz
   imarker_server_->applyChanges();
@@ -117,19 +115,18 @@ void IMarkerSimple::sendUpdatedIMarkerPose()
   imarker_server_->applyChanges();
 }
 
-void IMarkerSimple::make6DofMarker(const geometry_msgs::msg::Pose& pose, double scale)
+void IMarkerSimple::make6DofMarker(const geometry_msgs::msg::Pose& pose, double scale,
+                                   const std::string& parent_frame)
 {
   std::stringstream ss;
   ss << "Making 6dof interactive marker named " << IMARKER_NAME;
   RCLCPP_INFO(logger_, ss.str().c_str());
 
-  int_marker_.header.frame_id = "world";
+  int_marker_.header.frame_id = parent_frame;
   int_marker_.pose = pose;
   int_marker_.scale = scale;
 
   int_marker_.name = IMARKER_NAME;
-
-  // int_marker_.controls[0].interaction_mode = InteractiveMarkerControl::MENU;
 
   InteractiveMarkerControl control;
   control.orientation.w = 0.7071;
@@ -143,10 +140,9 @@ void IMarkerSimple::make6DofMarker(const geometry_msgs::msg::Pose& pose, double 
   control.interaction_mode = InteractiveMarkerControl::MOVE_AXIS;
   int_marker_.controls.push_back(control);
 
-  control.orientation.w = 0.7071;
   control.orientation.x = 0;
   control.orientation.y = 0.7071;
-  control.orientation.z = 0;
+
   control.name = "rotate_z";
   control.interaction_mode = InteractiveMarkerControl::ROTATE_AXIS;
   int_marker_.controls.push_back(control);
@@ -154,8 +150,6 @@ void IMarkerSimple::make6DofMarker(const geometry_msgs::msg::Pose& pose, double 
   control.interaction_mode = InteractiveMarkerControl::MOVE_AXIS;
   int_marker_.controls.push_back(control);
 
-  control.orientation.w = 0.7071;
-  control.orientation.x = 0;
   control.orientation.y = 0;
   control.orientation.z = 0.7071;
   control.name = "rotate_y";
