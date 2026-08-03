@@ -34,12 +34,11 @@
 #include <rclcpp/create_timer.hpp>
 #if __has_include(<tf2_eigen/tf2_eigen.hpp>)
 #include <tf2_eigen/tf2_eigen.hpp>
+#include <tf2/convert.hpp>
 #else
 #include <tf2_eigen/tf2_eigen.h>
-#endif
-
-// TF
 #include <tf2/convert.h>
+#endif
 
 // C++
 #include <string>
@@ -60,7 +59,7 @@ TFVisualTools::TFVisualTools(const rclcpp::Node::SharedPtr& node, double loop_hz
                            update_period, std::bind(&TFVisualTools::publishAllTransforms, this));
   // , std::placeholders::_1, std::placeholders::_2, std::placeholders::_3));
 
-  tf_broadcaster_ = std::make_shared<tf2_ros::TransformBroadcaster>(node);
+  tf_broadcaster_ = std::make_shared<tf2_ros::TransformBroadcaster>(*node);
 
   RCLCPP_INFO(logger_, "TFVisualTools Ready.");
 }
