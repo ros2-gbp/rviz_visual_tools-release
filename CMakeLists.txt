@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.5)
+cmake_minimum_required(VERSION 3.20)
 project(rviz_visual_tools)
 
 # Default to C++14
@@ -40,9 +40,22 @@ find_package(rviz_common REQUIRED)
 find_package(rviz_rendering REQUIRED)
 find_package(rviz_default_plugins REQUIRED)
 
-find_package(Qt5 REQUIRED COMPONENTS Widgets)
+# rviz switched to Qt6 in 15.1.14 (ros2/rviz#1635 merged 2025-12-08 but did not
+# land until that patch release; 15.1.13 and earlier are still Qt5).
+# Gate on rviz's version rather than Qt6 availability -- Ubuntu 24.04 ships both
+# Qt5 and Qt6, and linking a Qt6 build against a Qt5 rviz is an ABI mismatch.
+if(rviz_common_VERSION VERSION_GREATER_EQUAL 15.1.14)
+  find_package(Qt6 REQUIRED COMPONENTS Widgets)
+  set(QT_VERSION_MAJOR 6)
+  # Hint for transitive deps that use find_package(QT NAMES Qt6 Qt5 ...) which
+  # may incorrectly resolve to Qt5 due to CMake's ascending path order
+  set(QT_DIR "${Qt6_DIR}")
+else()
+  find_package(Qt5 REQUIRED COMPONENTS Widgets)
+  set(QT_VERSION_MAJOR 5)
+endif()
 
-## Qt5 boilerplate options from http://doc.qt.io/qt-5/cmake-manual.html
+## Qt boilerplate options from https://doc.qt.io/qt-6/cmake-manual.html
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 set(CMAKE_AUTOMOC ON)
 
@@ -77,14 +90,14 @@ set(HEADER_FILES
     )
 
 add_library(${PROJECT_NAME}_gui SHARED ${SOURCE_FILES} ${HEADER_FILES})
-ament_target_dependencies(${PROJECT_NAME}_gui PUBLIC
-  rclcpp
-  rviz_common
-  rviz_rendering
-  rviz_default_plugins
-  rviz_ogre_vendor
+target_link_libraries(${PROJECT_NAME}_gui PUBLIC
+  rclcpp::rclcpp
+  rviz_common::rviz_common
+  rviz_rendering::rviz_rendering
+  rviz_default_plugins::rviz_default_plugins
+  rviz_ogre_vendor::OgreMain
+  Qt${QT_VERSION_MAJOR}::Widgets
 )
-target_link_libraries(${PROJECT_NAME}_gui PUBLIC Qt5::Widgets)
 
 # prevent pluginlib from using boost
 target_compile_definitions(${PROJECT_NAME}_gui PUBLIC "PLUGINLIB__DISABLE_BOOST_FUNCTIONS")
@@ -98,18 +111,18 @@ add_library(${PROJECT_NAME}_remote_control SHARED
 # Needed for M_PI on Windows
 target_compile_definitions(${PROJECT_NAME}_remote_control PRIVATE _USE_MATH_DEFINES)
 
-ament_target_dependencies(${PROJECT_NAME}_remote_control
-  rclcpp
-  rclcpp_components
-  visualization_msgs
-  tf2
-  tf2_eigen
-  tf2_geometry_msgs
-  sensor_msgs
-  shape_msgs
-  std_msgs
-  trajectory_msgs
-  eigen_stl_containers
+target_link_libraries(${PROJECT_NAME}_remote_control
+  rclcpp::rclcpp
+  rclcpp_components::component
+  ${visualization_msgs_TARGETS}
+  tf2::tf2
+  tf2_eigen::tf2_eigen
+  ${tf2_geometry_msgs_TARGETS}
+  ${sensor_msgs_TARGETS}
+  ${shape_msgs_TARGETS}
+  ${std_msgs_TARGETS}
+  ${trajectory_msgs_TARGETS}
+  eigen_stl_containers::eigen_stl_containers
 )
 
 # Visualization Tools Library
@@ -118,22 +131,20 @@ add_library(${PROJECT_NAME} SHARED
   src/tf_visual_tools.cpp
 )
 target_compile_definitions(${PROJECT_NAME} PRIVATE _USE_MATH_DEFINES)
-ament_target_dependencies(${PROJECT_NAME} PUBLIC Eigen3)
 target_link_libraries(${PROJECT_NAME}
   ${PROJECT_NAME}_remote_control
-)
-ament_target_dependencies(${PROJECT_NAME}
-  rclcpp
-  rclcpp_components
-  visualization_msgs
-  tf2
-  tf2_eigen
-  tf2_geometry_msgs
-  sensor_msgs
-  shape_msgs
-  std_msgs
-  trajectory_msgs
-  eigen_stl_containers
+  Eigen3::Eigen
+  rclcpp::rclcpp
+  rclcpp_components::component
+  ${visualization_msgs_TARGETS}
+  tf2::tf2
+  tf2_eigen::tf2_eigen
+  ${tf2_geometry_msgs_TARGETS}
+  ${sensor_msgs_TARGETS}
+  ${shape_msgs_TARGETS}
+  ${std_msgs_TARGETS}
+  ${trajectory_msgs_TARGETS}
+  eigen_stl_containers::eigen_stl_containers
 )
 
 # Library
@@ -143,15 +154,13 @@ add_library(${PROJECT_NAME}_imarker_simple SHARED
 target_compile_definitions(${PROJECT_NAME}_imarker_simple PRIVATE _USE_MATH_DEFINES)
 target_link_libraries(${PROJECT_NAME}_imarker_simple
   ${PROJECT_NAME}
-)
-ament_target_dependencies(${PROJECT_NAME}_imarker_simple
-  rclcpp
-  interactive_markers
-  geometry_msgs
-  visualization_msgs
-  sensor_msgs
-  eigen_stl_containers
-  Eigen3
+  rclcpp::rclcpp
+  interactive_markers::interactive_markers
+  ${geometry_msgs_TARGETS}
+  ${visualization_msgs_TARGETS}
+  ${sensor_msgs_TARGETS}
+  eigen_stl_containers::eigen_stl_containers
+  Eigen3::Eigen
 )
 
 # Demo executable
@@ -161,11 +170,9 @@ add_executable(${PROJECT_NAME}_demo
 target_compile_definitions(${PROJECT_NAME}_demo PRIVATE _USE_MATH_DEFINES)
 target_link_libraries(${PROJECT_NAME}_demo
   ${PROJECT_NAME}
-)
-ament_target_dependencies(${PROJECT_NAME}_demo
-  rclcpp
-  geometry_msgs
-  std_msgs
+  rclcpp::rclcpp
+  ${geometry_msgs_TARGETS}
+  ${std_msgs_TARGETS}
 )
 
 # Demo executable
@@ -174,9 +181,7 @@ add_executable(${PROJECT_NAME}_imarker_simple_demo
 target_compile_definitions(${PROJECT_NAME}_imarker_simple_demo PRIVATE _USE_MATH_DEFINES)
 target_link_libraries(${PROJECT_NAME}_imarker_simple_demo
   ${PROJECT_NAME}_imarker_simple
-)
-ament_target_dependencies(${PROJECT_NAME}_imarker_simple_demo
-  rclcpp
+  rclcpp::rclcpp
 )
 
 #############
@@ -248,11 +253,9 @@ if (BUILD_TESTING)
     tests/rvt_test.cpp
     TIMEOUT 180)
   target_compile_definitions(${PROJECT_NAME}_rvt_test PRIVATE _USE_MATH_DEFINES)
-  ament_target_dependencies(${PROJECT_NAME}_rvt_test
-    rclcpp
-  )
   target_link_libraries(${PROJECT_NAME}_rvt_test
     ${PROJECT_NAME}
+    rclcpp::rclcpp
   )
 endif()
 
