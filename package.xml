@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <package format="3">
   <name>rviz_visual_tools</name>
-  <version>4.1.4</version>
+  <version>4.2.0</version>
   <description>Utility functions for displaying and debugging data in Rviz via published markers</description>
 
   <maintainer email="mike@picknik.ai">Mike Lautman</maintainer>
@@ -39,11 +39,11 @@
   <depend>std_msgs</depend>
   <depend>trajectory_msgs</depend>
 
-  <build_depend>qtbase5-dev</build_depend>
+  <build_depend>qt-base-dev</build_depend>
   <build_depend>eigen</build_depend>
 
   <build_export_depend>eigen</build_export_depend>
-  <exec_depend>libqt5-widgets</exec_depend>
+  <exec_depend>libqtwidgets</exec_depend>
 
   <!-- Launch files -->
   <exec_depend>ament_index_python</exec_depend>
