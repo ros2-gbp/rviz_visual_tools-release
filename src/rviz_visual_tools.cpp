@@ -42,15 +42,18 @@
 #include <rviz_visual_tools/rviz_visual_tools.hpp>
 
 // Conversions
-#include <tf2/convert.h>
-#include <tf2/LinearMath/Vector3.h>
-#include <tf2/LinearMath/Quaternion.h>
 #if __has_include(<tf2_eigen/tf2_eigen.hpp>)
 #include <tf2_eigen/tf2_eigen.hpp>
 #include <tf2_geometry_msgs/tf2_geometry_msgs.hpp>
+#include <tf2/convert.hpp>
+#include <tf2/LinearMath/Vector3.hpp>
+#include <tf2/LinearMath/Quaternion.hpp>
 #else
 #include <tf2_eigen/tf2_eigen.h>
 #include <tf2_geometry_msgs/tf2_geometry_msgs.h>
+#include <tf2/convert.h>
+#include <tf2/LinearMath/Vector3.h>
+#include <tf2/LinearMath/Quaternion.h>
 #endif
 
 // Use (void) to silent unused warnings.
@@ -1044,7 +1047,7 @@ bool RvizVisualTools::publishNormalAndDistancePlane(const Eigen::Vector3d& norma
 {
   // Scale distance for ABCD plane
   const auto D = -d * normal.norm();
-  return publishABCDPlane(normal(0), normal(1), normal(2), D);
+  return publishABCDPlane(normal(0), normal(1), normal(2), D, color, x_width, y_width);
 }
 
 bool RvizVisualTools::publishXYPlane(const Eigen::Isometry3d& pose, Colors color, double scale)
